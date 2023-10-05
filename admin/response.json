@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "data": {
+    "id": "15",
+    "name": "Новосибирск - Дзержинский район",
+    "code": "MOW",
+    "price": "200 000 000 руб.",
+    "add": "200 руб.",
+    "max": "13 м<sup>3</sup>"
+  },
+  "errors": "<b>Error</b> of the request"
+}

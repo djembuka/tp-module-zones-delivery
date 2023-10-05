@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zones Delivery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <button onclick="window.TwinpxZonesDelivery.showModal()">
+      Show zones delivery
+    </button>
+    <input type="checkbox" name="DELIVERY_ID" value="7" id="" checked />
+    <input type="text" name="ADDRESS" />
+    <div id="TwpxZdModal" class="twpx-zd-modal">
+      <div class="twpx-zd-modal-body">
+        <div class="twpx-zd-modal-title">
+          <div class="twpx-zd-modal-close"></div>
+          Выберите точный адрес доставки
+        </div>
+        <div class="twpx-zd-modal-content">
+          <div class="twpx-zd-modal-error"></div>
+          <div id="TwpxZdYmap"></div>
+        </div>
+        <div class="twpx-zd-modal-footer">
+          <div class="twpx-zd-modal-btn twpx-zd-modal-btn--close">Отмена</div>
+          <div class="twpx-zd-modal-btn twpx-zd-modal-btn--default">
+            Выбрать
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      window.BX = {};
+      window.BX.message = function (message) {
+        switch (message) {
+          case 'TWINPX_EMPTY_ZONE':
+            return 'Выбрано место вне зоны доставки.';
+            break;
+        }
+      };
+    </script>
+
+    <script>
+      window.TwinpxZonesDelivery = window.TwinpxZonesDelivery || {};
+      window.TwinpxZonesDelivery.ymapsUrl =
+        '//api-maps.yandex.ru/2.1.50/?apikey=6934dd6e-0a33-4cde-bfcf-7d6c30eeddac&load=package.full&lang=ru-RU';
+      window.TwinpxZonesDelivery.addressProperty = ['ADDRESS', 'ADDRESS2'];
+      window.TwinpxZonesDelivery.addressInput = {
+        name: 'DELIVERY_ID',
+        value: '7',
+      };
+      window.TwinpxZonesDelivery.centerMaps =
+        'Россия, Москва, Мневники 3, кор.1, кв. 1';
+      window.TwinpxZonesDelivery.zones = { 123: '1. МКАД', 456: '2. ЦАО' };
+      window.TwinpxZonesDelivery.chosenZoneTitle = '3. МКАД';
+      window.TwinpxZonesDelivery.chosenZoneId = 345;
+    </script>
+    <script src="//api-maps.yandex.ru/2.1.50/?apikey=6934dd6e-0a33-4cde-bfcf-7d6c30eeddac&load=package.full&lang=ru-RU&coordorder=longlat"></script>
+    <script src="geozones.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

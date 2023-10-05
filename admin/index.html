@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      html,
+      body {
+        min-height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      .adm-content {
+        display: grid;
+        grid-template-columns: 332px 1fr;
+        min-height: 100vh;
+      }
+      .adm-content-left-col {
+        background-color: #e7eef0;
+        width: 332px;
+        border-right: 1px solid #a7b8ca;
+        box-sizing: border-box;
+      }
+      .adm-content-right-col {
+        background-color: #e7eef0;
+        padding: 0 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="adm-content">
+      <div class="adm-content-left-col"></div>
+      <div class="adm-content-right-col">
+        <h1>Доставка по зонам</h1>
+        <div class="twpx-zd-adm" id="twpxZdRoot">
+          <div class="twpx-zd-adm-tabs" id="twpxZdTabs">
+            <div
+              class="twpx-zd-adm-tabs__item twpx-zd-adm-tabs__item--active"
+              data-tab="zones"
+            >
+              <img src="images/twpx-zd-icon-zones.svg" alt="" />
+              ЗОНЫ ДОСТАВКИ
+            </div>
+            <div class="twpx-zd-adm-tabs__item" data-tab="map">
+              <img src="images/twpx-zd-icon-map.svg" alt="" />ПОСМОТРЕТЬ НА
+              КАРТЕ
+            </div>
+            <div class="twpx-zd-adm-tabs__item" data-tab="settings">
+              <img src="images/twpx-zd-icon-settings.svg" alt="" />НАСТРОЙКИ
+            </div>
+          </div>
+          <div class="twpx-zd-adm-container">
+            <div
+              id="twpxZdZonesTab"
+              class="twpx-zd-adm__tab twpx-zd-adm__tab--active"
+              data-tab="zones"
+            >
+              <div
+                class="twpx-zd-adm__mode twpx-zd-adm__mode--active"
+                data-mode="list"
+              >
+                <div class="twpx-zd-adm__heading">Список полигонов</div>
+                <div class="twpx-zd-adm__list" id="twpxZdList">
+                  <div class="twpx-zd-adm__list-item" data-id="10">
+                    <div class="twpx-zd-adm__list__name">
+                      <div class="twpx-zd-adm__list__heading">Название</div>
+                      Москва — центр
+                    </div>
+                    <div class="twpx-zd-adm__list__code">
+                      <div class="twpx-zd-adm__list__heading">ID</div>
+                      MOW
+                    </div>
+                    <div class="twpx-zd-adm__list__price">
+                      <div class="twpx-zd-adm__list__heading">
+                        Цена 1 м<sup>3</sup>
+                      </div>
+                      200 000 руб.
+                    </div>
+                    <div class="twpx-zd-adm__list__add">
+                      <div class="twpx-zd-adm__list__heading">
+                        Доп. м<sup>3</sup>
+                      </div>
+                      200 000 руб.
+                    </div>
+                    <div class="twpx-zd-adm__list__max">
+                      <div class="twpx-zd-adm__list__heading">Макс объем</div>
+                      13 м<sup>3</sup>
+                    </div>
+                    <div class="twpx-zd-adm__list__activity">
+                      <div class="twpx-zd-adm__switcher"></div>
+                    </div>
+                    <div class="twpx-zd-adm__list__edit">
+                      <img src="images/twpx-zd-icon-settings.svg" alt="" />
+                    </div>
+                  </div>
+                  <div class="twpx-zd-adm__list-item" data-id="11">
+                    <div class="twpx-zd-adm__list__name">
+                      <div class="twpx-zd-adm__list__heading">Название</div>
+                      Москва. Третье кольцо
+                    </div>
+                    <div class="twpx-zd-adm__list__code">
+                      <div class="twpx-zd-adm__list__heading">ID</div>
+                      MOW
+                    </div>
+                    <div class="twpx-zd-adm__list__price"></div>
+                    <div class="twpx-zd-adm__list__add"></div>
+                    <div class="twpx-zd-adm__list__max">
+                      <div class="twpx-zd-adm__list__heading">Макс объем</div>
+                      13 м<sup>3</sup>
+                    </div>
+                    <div class="twpx-zd-adm__list__activity">
+                      <div class="twpx-zd-adm__switcher"></div>
+                    </div>
+                    <div class="twpx-zd-adm__list__edit">
+                      <img src="images/twpx-zd-icon-settings.svg" alt="" />
+                    </div>
+                  </div>
+                  <div class="twpx-zd-adm__list-item" data-id="12">
+                    <div class="twpx-zd-adm__list__name">
+                      <div class="twpx-zd-adm__list__heading">Название</div>
+                      Москва. Бульварное кольцо
+                    </div>
+                    <div class="twpx-zd-adm__list__code">
+                      <div class="twpx-zd-adm__list__heading">ID</div>
+                      MOW
+                    </div>
+                    <div class="twpx-zd-adm__list__price">
+                      <div class="twpx-zd-adm__list__heading">
+                        Цена 1 м<sup>3</sup>
+                      </div>
+                      200 000 руб.
+                    </div>
+                    <div class="twpx-zd-adm__list__add">
+                      <div class="twpx-zd-adm__list__heading">
+                        Доп. м<sup>3</sup>
+                      </div>
+                      200 000 руб.
+                    </div>
+                    <div class="twpx-zd-adm__list__max">
+                      <div class="twpx-zd-adm__list__heading">Макс объем</div>
+                      13 м<sup>3</sup>
+                    </div>
+                    <div class="twpx-zd-adm__list__activity">
+                      <div class="twpx-zd-adm__switcher"></div>
+                    </div>
+                    <div class="twpx-zd-adm__list__edit">
+                      <img src="images/twpx-zd-icon-settings.svg" alt="" />
+                    </div>
+                  </div>
+                  <div class="twpx-zd-adm__list-item" data-id="13">
+                    <div class="twpx-zd-adm__list__name">
+                      <div class="twpx-zd-adm__list__heading">Название</div>
+                      Новосибирск - Дзержинский район
+                    </div>
+                    <div class="twpx-zd-adm__list__code">
+                      <div class="twpx-zd-adm__list__heading">ID</div>
+                      MOW
+                    </div>
+                    <div class="twpx-zd-adm__list__price">
+                      <div class="twpx-zd-adm__list__heading">
+                        Цена 1 м<sup>3</sup>
+                      </div>
+                      200 000 руб.
+                    </div>
+                    <div class="twpx-zd-adm__list__add">
+                      <div class="twpx-zd-adm__list__heading">
+                        Доп. м<sup>3</sup>
+                      </div>
+                      200 000 руб.
+                    </div>
+                    <div class="twpx-zd-adm__list__max">
+                      <div class="twpx-zd-adm__list__heading">Макс объем</div>
+                      13 м<sup>3</sup>
+                    </div>
+                    <div class="twpx-zd-adm__list__activity">
+                      <div class="twpx-zd-adm__switcher"></div>
+                    </div>
+                    <div class="twpx-zd-adm__list__edit">
+                      <img src="images/twpx-zd-icon-settings.svg" alt="" />
+                    </div>
+                  </div>
+                  <div class="twpx-zd-adm__list-item" data-id="14">
+                    <div class="twpx-zd-adm__list__name">
+                      <div class="twpx-zd-adm__list__heading">Название</div>
+                      Москва — центр
+                    </div>
+                    <div class="twpx-zd-adm__list__code">
+                      <div class="twpx-zd-adm__list__heading">ID</div>
+                      MOW
+                    </div>
+                    <div class="twpx-zd-adm__list__price">
+                      <div class="twpx-zd-adm__list__heading">
+                        Цена 1 м<sup>3</sup>
+                      </div>
+                      200 000 руб.
+                    </div>
+                    <div class="twpx-zd-adm__list__add">
+                      <div class="twpx-zd-adm__list__heading">
+                        Доп. м<sup>3</sup>
+                      </div>
+                      200 000 руб.
+                    </div>
+                    <div class="twpx-zd-adm__list__max">
+                      <div class="twpx-zd-adm__list__heading">Макс объем</div>
+                      13 м<sup>3</sup>
+                    </div>
+                    <div class="twpx-zd-adm__list__activity">
+                      <div class="twpx-zd-adm__switcher"></div>
+                    </div>
+                    <div class="twpx-zd-adm__list__edit">
+                      <img src="images/twpx-zd-icon-settings.svg" alt="" />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="twpx-zd-amd-btn twpx-zd-amd-btn--default"
+                  id="twpxZdAddPolygonBtn"
+                >
+                  ДОБАВИТЬ ПОЛИГОН
+                </div>
+              </div>
+
+              <div class="twpx-zd-adm__mode" data-mode="form">
+                <div class="twpx-zd-adm__heading">Добавить зону доставки</div>
+                <div id="twpxZdAddFormError" class="twpx-zd-adm__eror"></div>
+                <form
+                  action="response.json"
+                  method=""
+                  id="twpxZdAddForm"
+                  data-fill-action="values.json"
+                  data-delete-action="delete.json"
+                >
+                  <div class="twpx-zd-adm__form">
+                    <input
+                      type="hidden"
+                      name="id"
+                      id="twpxZdIdHidden"
+                      value=""
+                    />
+                    <div class="twpx-zd-adm__form__col">
+                      <div class="twpx-zd-adm__control">
+                        <input
+                          type="text"
+                          name="name"
+                          id="twpxZdTitle"
+                          class="twpx-zd-adm__input"
+                          data-code="name"
+                        />
+                        <label class="twpx-zd-adm__label" for="twpxZdTitle"
+                          >Название</label
+                        >
+                      </div>
+                      <div class="twpx-zd-adm__control-select">
+                        <label class="twpx-zd-adm__label"
+                          >Расчёт стоимости</label
+                        >
+                        <select
+                          name="type"
+                          id="twpxZdType"
+                          class="twpx-zd-adm__select"
+                          data-code="type"
+                        >
+                          <option value="weight">По весу</option>
+                          <option value="volume">По объему</option>
+                          <option value="fixed">Фиксированный</option>
+                        </select>
+                      </div>
+                      <div class="twpx-zd-adm__control-set" data-type="weight">
+                        <div class="twpx-zd-adm__control">
+                          <input
+                            type="text"
+                            name="weightPrice"
+                            id="twpxZdWeightMinPrice"
+                            class="twpx-zd-adm__input"
+                            data-code="price"
+                          />
+                          <label
+                            class="twpx-zd-adm__label"
+                            for="twpxZdWeightMinPrice"
+                            >Минимальная стоимость за 1 кг</label
+                          >
+                        </div>
+                        <div class="twpx-zd-adm__control">
+                          <input
+                            type="text"
+                            name="weightAdd"
+                            id="twpxZdWeightAddPrice"
+                            class="twpx-zd-adm__input"
+                            data-code="add"
+                          />
+                          <label
+                            class="twpx-zd-adm__label"
+                            for="twpxZdWeightAddPrice"
+                            >Добавочная стоимость за каждый 1 кг</label
+                          >
+                        </div>
+                        <div class="twpx-zd-adm__control">
+                          <input
+                            type="text"
+                            name="weightMax"
+                            id="twpxZdWeightMaxPrice"
+                            class="twpx-zd-adm__input"
+                            data-code="name"
+                          />
+                          <label
+                            class="twpx-zd-adm__label"
+                            for="twpxZdWeightMaxPrice"
+                            >Максимальный вес одной доставки (число, кг)</label
+                          >
+                        </div>
+                      </div>
+                      <div class="twpx-zd-adm__control-set" data-type="volume">
+                        <div class="twpx-zd-adm__control">
+                          <input
+                            type="text"
+                            name="volumePrice"
+                            id="twpxZdVolumeMinPrice"
+                            class="twpx-zd-adm__input"
+                            data-code="price"
+                          />
+                          <label
+                            class="twpx-zd-adm__label"
+                            for="twpxZdVolumeMinPrice"
+                            >Минимальная стоимость за 1 м3</label
+                          >
+                        </div>
+                        <div class="twpx-zd-adm__control">
+                          <input
+                            type="text"
+                            name="volumeAdd"
+                            id="twpxZdVolumeAddPrice"
+                            class="twpx-zd-adm__input"
+                            data-code="add"
+                          />
+                          <label
+                            class="twpx-zd-adm__label"
+                            for="twpxZdVolumeAddPrice"
+                            >Добавочная стоимость за каждый 1 м3</label
+                          >
+                        </div>
+                        <div class="twpx-zd-adm__control">
+                          <input
+                            type="text"
+                            name="volumeMax"
+                            id="twpxZdVolumeMaxPrice"
+                            class="twpx-zd-adm__input"
+                            data-code="name"
+                          />
+                          <label
+                            class="twpx-zd-adm__label"
+                            for="twpxZdVolumeMaxPrice"
+                            >Максимальный объём одной доставки (число,
+                            м3)</label
+                          >
+                        </div>
+                      </div>
+                      <div class="twpx-zd-adm__control-set" data-type="fixed">
+                        <div class="twpx-zd-adm__control">
+                          <input
+                            type="text"
+                            name="fixedPrice"
+                            id="twpxZdFixedMinPrice"
+                            class="twpx-zd-adm__input"
+                            data-code="price"
+                          />
+                          <label
+                            class="twpx-zd-adm__label"
+                            for="twpxZdFixedMinPrice"
+                            >Стоимость доставки</label
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div class="twpx-zd-adm__form__col">
+                      <div class="twpx-zd-adm__control">
+                        <textarea
+                          rows="10"
+                          cols="10"
+                          name="polygons"
+                          id="twpxZdPolygons"
+                          class="twpx-zd-adm__textarea"
+                        ></textarea>
+                        <label class="twpx-zd-adm__label" for="twpxZdPolygons"
+                          >Полигоны</label
+                        >
+                      </div>
+                      <div class="twpx-zd-adm__control">
+                        <textarea
+                          rows="10"
+                          cols="10"
+                          name="props"
+                          id="twpxZdProps"
+                          class="twpx-zd-adm__textarea"
+                        ></textarea>
+                        <label class="twpx-zd-adm__label" for="twpxZdProps"
+                          >Свойства полигонов</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <div class="twpx-zd-adm__buttons">
+                    <div class="twpx-zd-amd-btn twpx-zd-amd-btn--save">
+                      СОХРАНИТЬ
+                    </div>
+                    <div class="twpx-zd-amd-btn twpx-zd-amd-btn--delete">
+                      УДАЛИТЬ
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div id="twpxZdMapTab" class="twpx-zd-adm__tab" data-tab="map">
+              <div class="twpx-zd-adm__heading">Текущие зоны на карте</div>
+              <div id="twpxZdYmap"></div>
+            </div>
+
+            <div
+              id="twpxZdSettingsTab"
+              class="twpx-zd-adm__tab"
+              data-tab="settings"
+            >
+              <div class="twpx-zd-adm__heading">Настройки</div>
+              <div id="twpxZdSettingsFormError" class="twpx-zd-adm__eror"></div>
+              <form action="" method="" id="twpxZdSettingsForm">
+                <div class="twpx-zd-adm__form">
+                  <div class="twpx-zd-adm__form__col">
+                    <div class="twpx-zd-adm__control">
+                      <div class="twpx-zd-adm__control__unit">руб.</div>
+                      <input
+                        type="text"
+                        name=""
+                        id="twpxZdSettingsMinPrice"
+                        class="twpx-zd-adm__input"
+                      />
+                      <label
+                        class="twpx-zd-adm__label"
+                        for="twpxZdSettingsMinPrice"
+                        >Минимальная стоимость заказа</label
+                      >
+                    </div>
+                    <div class="twpx-zd-adm__control">
+                      <input
+                        type="text"
+                        name=""
+                        id="twpxZdSettingsLocationId"
+                        class="twpx-zd-adm__input"
+                      />
+                      <label
+                        class="twpx-zd-adm__label"
+                        for="twpxZdSettingsLocationId"
+                        >ID поля местоположение</label
+                      >
+                    </div>
+                    <div class="twpx-zd-adm__control">
+                      <input
+                        type="text"
+                        name=""
+                        id="twpxZdSettingsAddressId"
+                        class="twpx-zd-adm__input"
+                      />
+                      <label
+                        class="twpx-zd-adm__label"
+                        for="twpxZdSettingsAddressId"
+                        >ID поля Адрес доставки</label
+                      >
+                    </div>
+                    <div class="twpx-zd-adm__control">
+                      <input
+                        type="text"
+                        name=""
+                        id="twpxZdSettingsYmapKey"
+                        class="twpx-zd-adm__input"
+                      />
+                      <label
+                        class="twpx-zd-adm__label"
+                        for="twpxZdSettingsYmapKey"
+                        >Ключ API Яндекс Карт</label
+                      >
+                    </div>
+                    <label class="twpx-zd-adm__control-checkbox">
+                      <input
+                        type="checkbox"
+                        name="ymap-load"
+                        class="twpx-zd-adm__checkbox"
+                      />
+                      <div class="twpx-zd-adm__switcher"></div>
+                      <span>Не подключать библиотеку Яндекс Карт</span></label
+                    >
+                  </div>
+                </div>
+                <div class="twpx-zd-adm__buttons">
+                  <div class="twpx-zd-amd-btn twpx-zd-amd-btn--save">
+                    СОХРАНИТЬ
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      window.BX = {};
+      window.BX.message = function (message) {
+        switch (message) {
+          case 'TWINPX_JS_ENTER_ADDRESS':
+            return 'Введите адрес';
+            break;
+        }
+      };
+    </script>
+
+    <script>
+      window.TwinpxZonesDelivery = window.TwinpxZonesDelivery || {};
+      window.TwinpxZonesDelivery.imagePath = 'images/'; //window.TwinpxZonesDelivery
+      window.TwinpxZonesDelivery.ymapsUrl =
+        '//api-maps.yandex.ru/2.1.50/?apikey=6934dd6e-0a33-4cde-bfcf-7d6c30eeddac&load=package.full&lang=ru-RU';
+      window.TwinpxZonesDelivery.activityUrl = 'activity.json';
+      window.TwinpxZonesDelivery.geozonesUrl = 'geozones.json';
+      window.TwinpxZonesDelivery.regionName = 'Москва';
+    </script>
+
+    <script src="//api-maps.yandex.ru/2.1.50/?apikey=6934dd6e-0a33-4cde-bfcf-7d6c30eeddac&load=package.full&lang=ru-RU&coordorder=longlat"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
