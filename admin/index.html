@@ -405,6 +405,39 @@
                           >Свойства полигонов</label
                         >
                       </div>
+                      <label
+                        for="twpxZdGeojsonFileInput"
+                        id="twpxZdGeojsonBtn"
+                        class="twpx-zd-amd-btn twpx-zd-amd-btn--default"
+                      >
+                        ИМПОРТ GEOJSON
+                        <input
+                          type="file"
+                          accept=".geojson"
+                          name=""
+                          id="twpxZdGeojsonFileInput"
+                        />
+                      </label>
+                      <div id="TwpxZdGeojsonModal" class="twpx-zd-modal">
+                        <div class="twpx-zd-modal-body">
+                          <div class="twpx-zd-modal-close"></div>
+                          <div class="twpx-zd-modal-title">
+                            Выберите полигоны для зоны
+                          </div>
+                          <div class="twpx-zd-modal-content">
+                            <div class="twpx-zd-modal-error"></div>
+                            <div id="TwpxZdGeojsonYmap"></div>
+                          </div>
+                          <div class="twpx-zd-modal-footer">
+                            <div class="twpx-zd-amd-btn twpx-zd-amd-btn--close">
+                              Отменить
+                            </div>
+                            <div class="twpx-zd-amd-btn twpx-zd-amd-btn--save">
+                              Выбрать
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="twpx-zd-adm__buttons">

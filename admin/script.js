@@ -4,6 +4,9 @@ window.addEventListener('DOMContentLoaded', () => {
     tabs: document.getElementById('twpxZdTabs'),
     idHidden: document.getElementById('twpxZdIdHidden'),
     addForm: document.getElementById('twpxZdAddForm'),
+    geojsonFileInput: document.getElementById('twpxZdGeojsonFileInput'),
+    geojsonModal: document.getElementById('TwpxZdGeojsonModal'),
+    geojsonYmap: undefined,
     addFormError: document.getElementById('twpxZdAddFormError'),
     settingsForm: document.getElementById('twpxZdSettingsForm'),
     settingsFormError: document.getElementById('twpxZdSettingsFormError'),
@@ -194,6 +197,21 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     },
     initAddForm() {
+      //add geojson button
+      twpxZdAdm.geojsonFileInput.addEventListener('change', () => {
+        const file = twpxZdAdm.geojsonFileInput.files[0];
+
+        if (file && file.name && !file.name.endsWith('geojson')) {
+          console.log('File is not a geojson.', file.name, file);
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+          twpxZdAdm.showModal(JSON.parse(reader.result).features);
+        });
+        reader.readAsText(file);
+      });
       //add form submit button
       twpxZdAdm.addForm
         .querySelector('.twpx-zd-amd-btn--save')
@@ -209,6 +227,171 @@ window.addEventListener('DOMContentLoaded', () => {
         twpxZdAdm.formSubmit(e, twpxZdAdm.addForm, twpxZdAdm.addFormSubmit);
       });
     },
+
+    showModal(polygons) {
+      twpxZdAdm.geojsonModal.classList.add('twpx-zd-modal--show');
+      twpxZdAdm.geojsonModal.classList.add('twpx-zd-modal--z');
+      twpxZdAdm.ymapGeojson(polygons);
+      //calculate center of the map
+      //   //show errors if needed
+      //   if (!twpxZdAdm.ymapsUrl) {
+      //     twpxZdAdm.showError(BX.message('TWINPX_JS_NO_YMAP_KEY'));
+      //     twpxZdAdm.geojsonModal.classList.add('twpx-zd-modal--show');
+      //     twpxZdAdm.geojsonModal.classList.add('twpx-zd-modal--z');
+      //     return;
+      //   } else if (!TwinpxZonesDelivery.centerMaps) {
+      //     TwinpxZonesDelivery.showError(BX.message('TWINPX_JS_NO_REGION'));
+      //     TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--show');
+      //     TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--z');
+      //     return;
+      //   } else if (TwinpxZonesDelivery.ymapsMap) {
+      //     //geo code
+      //     const zdGeocoder = ymaps.geocode(TwinpxZonesDelivery.centerMaps, {
+      //       results: 1,
+      //     });
+      //     zdGeocoder.then(async (res) => {
+      //       let firstGeoObject = res.geoObjects.get(0);
+      //       TwinpxZonesDelivery.highlightResult(firstGeoObject);
+      //       //let firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
+      //       TwinpxZonesDelivery.regionBounds =
+      //         firstGeoObject.properties.get('boundedBy');
+      //       //TwinpxZonesDelivery.chosenCoords = firstGeoObjectCoords;
+      //       TwinpxZonesDelivery.ymapsMap.setBounds(
+      //         TwinpxZonesDelivery.regionBounds
+      //       );
+      //       TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--show');
+      //       TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--z');
+      //     });
+      //   }
+    },
+    hideModal() {
+      twpxZdAdm.geojsonModal.classList.remove('twpx-zd-modal--show');
+
+      setTimeout(() => {
+        twpxZdAdm.geojsonModal.classList.remove('twpx-zd-modal--z');
+      }, 500);
+    },
+
+    ymapGeojson(polygons) {
+      if (twpxZdAdm.geojsonYmap) {
+        twpxZdAdm.geojsonYmap.destroy();
+        twpxZdAdm.geojsonYmap = undefined;
+      }
+
+      //set map
+      twpxZdAdm.geojsonYmap = new ymaps.Map(
+        document.getElementById('TwpxZdGeojsonYmap'),
+        {
+          center: [0, 0],
+          zoom: 9,
+          controls: [],
+        },
+        {
+          suppressMapOpenBlock: true,
+        }
+      );
+
+      let deliveryZones = ymaps
+        .geoQuery(
+          ymaps.geoQuery({
+            type: 'FeatureCollection',
+            features: polygons,
+          })
+        )
+        .addToMap(twpxZdAdm.geojsonYmap);
+
+      deliveryZones.each((obj) => {
+        obj.options.set({
+          fillColor: obj.properties.get('fill'),
+          fillOpacity: obj.properties.get('fill-opacity'),
+          strokeColor: obj.properties.get('stroke'),
+          strokeWidth: obj.properties.get('stroke-width'),
+          strokeOpacity: obj.properties.get('stroke-opacity'),
+        });
+
+        obj.events.add('click', (e) => {
+          e.stopPropagation();
+          highlightResult(deliveryPoint);
+        });
+      });
+
+      //map bounds
+      twpxZdAdm.polygonsBounds = deliveryZones.getBounds();
+      twpxZdAdm.geojsonYmap.setBounds(twpxZdAdm.polygonsBounds, {
+        checkZoomRange: true,
+      });
+
+      function highlightResult(obj) {
+        // Сохраняем координаты переданного объекта.
+        var coords = obj.geometry.getCoordinates(),
+          // Находим полигон, в который входят переданные координаты.
+          polygon = deliveryZones.searchContaining(coords).get(0);
+
+        if (polygon) {
+          // Уменьшаем прозрачность всех полигонов, кроме того, в который входят переданные координаты.
+          deliveryZones.setOptions('fillOpacity', 0.4);
+          polygon.options.set('fillOpacity', 0.8);
+          // Перемещаем метку с подписью в переданные координаты и перекрашиваем её в цвет полигона.
+          deliveryPoint.geometry.setCoordinates(coords);
+          deliveryPoint.options.set(
+            'iconColor',
+            polygon.properties.get('fill')
+          );
+
+          // Задаем подпись для метки.
+          if (typeof obj.getThoroughfare === 'function') {
+            //if search
+            deliveryPoint.properties.set({
+              balloonContent: `
+                          <b>${polygon.properties.get('title')}</b>
+                          <br>${getAddress(obj)}
+                        `,
+            });
+            deliveryPoint.balloon.open();
+          } else {
+            // Если вы не хотите, чтобы при каждом перемещении метки отправлялся запрос к геокодеру,
+            // закомментируйте код ниже.
+            ymaps.geocode(coords, { results: 1 }).then(function (res) {
+              var obj = res.geoObjects.get(0);
+
+              deliveryPoint.properties.set({
+                balloonContent: `
+                            <b>${polygon.properties.get('title')}</b>
+                            <br>${getAddress(obj)}
+                          `,
+              });
+              deliveryPoint.balloon.open();
+            });
+          }
+
+          //center the map
+          twpxZdAdm.ymapMap.panTo(coords);
+        } else {
+          // Если переданные координаты не попадают в полигон, то задаём стандартную прозрачность полигонов.
+          deliveryZones.setOptions('fillOpacity', 0.4);
+          // Перемещаем метку по переданным координатам.
+          deliveryPoint.geometry.setCoordinates(coords);
+          // Задаём контент балуна и метки.
+          deliveryPoint.properties.set({
+            balloonContent: BX.message('TWINPX_JS_CALL'),
+          });
+          // Перекрашиваем метку в чёрный цвет.
+          deliveryPoint.options.set('iconColor', 'black');
+        }
+
+        function getAddress(obj) {
+          var address = [
+            obj.getThoroughfare(),
+            obj.getPremiseNumber(),
+            obj.getPremise(),
+          ].join(' ');
+          if (address.trim() === '') {
+            address = obj.getAddressLine();
+          }
+          return address;
+        }
+      }
+    },
     initSettingsForm() {
       //settings form submit button
       twpxZdAdm.settingsForm
@@ -220,6 +403,7 @@ window.addEventListener('DOMContentLoaded', () => {
     ymapLoad() {
       if (twpxZdAdm.ymapMap) {
         twpxZdAdm.ymapMap.destroy();
+        twpxZdAdm.ymapMap = undefined;
       }
       TwinpxZonesDelivery.regionName =
         TwinpxZonesDelivery.regionName || 'Москва';
