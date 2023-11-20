@@ -7,6 +7,8 @@ window.addEventListener('DOMContentLoaded', () => {
     geojsonFileInput: document.getElementById('twpxZdGeojsonFileInput'),
     geojsonModal: document.getElementById('TwpxZdGeojsonModal'),
     geojsonYmap: undefined,
+    geojsonChosenProperties: undefined,
+    geojsonStorage: {},
     addFormError: document.getElementById('twpxZdAddFormError'),
     settingsForm: document.getElementById('twpxZdSettingsForm'),
     settingsFormError: document.getElementById('twpxZdSettingsFormError'),
@@ -33,6 +35,8 @@ window.addEventListener('DOMContentLoaded', () => {
       twpxZdAdm.addPolygonBtn.addEventListener('click', () => {
         twpxZdAdm.swithZonesMode('form');
       });
+      //geojson modal events
+      twpxZdAdm.geojsonModalEvents();
       //input label
       twpxZdAdm.initInputs();
       //select
@@ -209,6 +213,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const reader = new FileReader();
         reader.addEventListener('load', () => {
           twpxZdAdm.showModal(JSON.parse(reader.result).features);
+          twpxZdAdm.geojsonFileInput.value = '';
         });
         reader.readAsText(file);
       });
@@ -232,37 +237,6 @@ window.addEventListener('DOMContentLoaded', () => {
       twpxZdAdm.geojsonModal.classList.add('twpx-zd-modal--show');
       twpxZdAdm.geojsonModal.classList.add('twpx-zd-modal--z');
       twpxZdAdm.ymapGeojson(polygons);
-      //calculate center of the map
-      //   //show errors if needed
-      //   if (!twpxZdAdm.ymapsUrl) {
-      //     twpxZdAdm.showError(BX.message('TWINPX_JS_NO_YMAP_KEY'));
-      //     twpxZdAdm.geojsonModal.classList.add('twpx-zd-modal--show');
-      //     twpxZdAdm.geojsonModal.classList.add('twpx-zd-modal--z');
-      //     return;
-      //   } else if (!TwinpxZonesDelivery.centerMaps) {
-      //     TwinpxZonesDelivery.showError(BX.message('TWINPX_JS_NO_REGION'));
-      //     TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--show');
-      //     TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--z');
-      //     return;
-      //   } else if (TwinpxZonesDelivery.ymapsMap) {
-      //     //geo code
-      //     const zdGeocoder = ymaps.geocode(TwinpxZonesDelivery.centerMaps, {
-      //       results: 1,
-      //     });
-      //     zdGeocoder.then(async (res) => {
-      //       let firstGeoObject = res.geoObjects.get(0);
-      //       TwinpxZonesDelivery.highlightResult(firstGeoObject);
-      //       //let firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
-      //       TwinpxZonesDelivery.regionBounds =
-      //         firstGeoObject.properties.get('boundedBy');
-      //       //TwinpxZonesDelivery.chosenCoords = firstGeoObjectCoords;
-      //       TwinpxZonesDelivery.ymapsMap.setBounds(
-      //         TwinpxZonesDelivery.regionBounds
-      //       );
-      //       TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--show');
-      //       TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--z');
-      //     });
-      //   }
     },
     hideModal() {
       twpxZdAdm.geojsonModal.classList.remove('twpx-zd-modal--show');
@@ -271,8 +245,13 @@ window.addEventListener('DOMContentLoaded', () => {
         twpxZdAdm.geojsonModal.classList.remove('twpx-zd-modal--z');
       }, 500);
     },
-
     ymapGeojson(polygons) {
+      //create id
+      polygons.forEach((p) => {
+        p.properties.id = Math.round(Math.random() * 10000);
+      });
+      console.log(polygons);
+
       if (twpxZdAdm.geojsonYmap) {
         twpxZdAdm.geojsonYmap.destroy();
         twpxZdAdm.geojsonYmap = undefined;
@@ -300,6 +279,11 @@ window.addEventListener('DOMContentLoaded', () => {
         )
         .addToMap(twpxZdAdm.geojsonYmap);
 
+      //create storage for polygons
+      polygons.forEach((p) => {
+        twpxZdAdm.geojsonStorage[p.properties.id] = { polygon: p };
+      });
+
       deliveryZones.each((obj) => {
         obj.options.set({
           fillColor: obj.properties.get('fill'),
@@ -311,7 +295,46 @@ window.addEventListener('DOMContentLoaded', () => {
 
         obj.events.add('click', (e) => {
           e.stopPropagation();
-          highlightResult(deliveryPoint);
+
+          const id = obj.properties.get('id');
+          const st = twpxZdAdm.geojsonStorage[id];
+          const chosenLength = Object.values(twpxZdAdm.geojsonStorage).filter(
+            (v) => v.checked
+          ).length;
+
+          if (!st) return;
+
+          if (!st.checked) {
+            st.checked = true;
+
+            if (!chosenLength) {
+              twpxZdAdm.geojsonChosenProperties = st.polygon.properties;
+            } else if (twpxZdAdm.geojsonChosenProperties) {
+              const p = twpxZdAdm.geojsonChosenProperties;
+              obj.options.set({
+                fillColor: p.fill,
+                fillOpacity: p['fill-opacity'],
+                strokeColor: p.stroke,
+                strokeWidth: p['stroke-width'],
+                strokeOpacity: p['stroke-opacity'],
+              });
+            }
+          } else {
+            delete st.checked;
+
+            if (chosenLength === 1) {
+              twpxZdAdm.geojsonChosenProperties = undefined;
+            } else {
+              const p = st.polygon.properties;
+              obj.options.set({
+                fillColor: p.fill,
+                fillOpacity: p['fill-opacity'],
+                strokeColor: p.stroke,
+                strokeWidth: p['stroke-width'],
+                strokeOpacity: p['stroke-opacity'],
+              });
+            }
+          }
         });
       });
 
@@ -321,76 +344,79 @@ window.addEventListener('DOMContentLoaded', () => {
         checkZoomRange: true,
       });
 
-      function highlightResult(obj) {
-        // Сохраняем координаты переданного объекта.
-        var coords = obj.geometry.getCoordinates(),
-          // Находим полигон, в который входят переданные координаты.
-          polygon = deliveryZones.searchContaining(coords).get(0);
+      //find center of each polygon
+      polygons.forEach((p) => {
+        const coordinates = p.geometry.coordinates[0];
+        const x =
+          coordinates.reduce((acc, cur) => acc + cur[0], 0) /
+          coordinates.length;
+        const y =
+          coordinates.reduce((acc, cur) => acc + cur[1], 0) /
+          coordinates.length;
 
-        if (polygon) {
-          // Уменьшаем прозрачность всех полигонов, кроме того, в который входят переданные координаты.
-          deliveryZones.setOptions('fillOpacity', 0.4);
-          polygon.options.set('fillOpacity', 0.8);
-          // Перемещаем метку с подписью в переданные координаты и перекрашиваем её в цвет полигона.
-          deliveryPoint.geometry.setCoordinates(coords);
-          deliveryPoint.options.set(
-            'iconColor',
-            polygon.properties.get('fill')
+        const circle = new ymaps.Circle(
+          [[x, y], 100],
+          {},
+          {
+            fillColor: '#fff',
+            strokeColor: '#fff',
+            strokeWidth: 1,
+          }
+        );
+
+        twpxZdAdm.geojsonYmap.geoObjects.add(circle);
+      });
+    },
+    geojsonModalEvents() {
+      //save button
+      twpxZdAdm.geojsonModal
+        .querySelector('.twpx-zd-amd-btn--save')
+        .addEventListener('click', (e) => {
+          e.preventDefault();
+
+          const polygonInput =
+            twpxZdAdm.addForm.querySelector('#twpxZdPolygons');
+          const propsInput = twpxZdAdm.addForm.querySelector('#twpxZdProps');
+
+          polygonInput.value = JSON.stringify(
+            Object.values(twpxZdAdm.geojsonStorage)
+              .filter((v) => v.checked)
+              .map((v) => v.polygon.geometry.coordinates[0])
           );
+          polygonInput.focus();
 
-          // Задаем подпись для метки.
-          if (typeof obj.getThoroughfare === 'function') {
-            //if search
-            deliveryPoint.properties.set({
-              balloonContent: `
-                          <b>${polygon.properties.get('title')}</b>
-                          <br>${getAddress(obj)}
-                        `,
-            });
-            deliveryPoint.balloon.open();
-          } else {
-            // Если вы не хотите, чтобы при каждом перемещении метки отправлялся запрос к геокодеру,
-            // закомментируйте код ниже.
-            ymaps.geocode(coords, { results: 1 }).then(function (res) {
-              var obj = res.geoObjects.get(0);
-
-              deliveryPoint.properties.set({
-                balloonContent: `
-                            <b>${polygon.properties.get('title')}</b>
-                            <br>${getAddress(obj)}
-                          `,
-              });
-              deliveryPoint.balloon.open();
-            });
+          if (twpxZdAdm.geojsonChosenProperties) {
+            delete twpxZdAdm.geojsonChosenProperties.id;
           }
+          propsInput.value = JSON.stringify(twpxZdAdm.geojsonChosenProperties);
+          propsInput.focus();
+          twpxZdAdm.hideModal();
+        });
+      //close button
+      twpxZdAdm.geojsonModal
+        .querySelector('.twpx-zd-amd-btn--close')
+        .addEventListener('click', (e) => {
+          e.preventDefault();
+          twpxZdAdm.hideModal();
+        });
+      //close
+      twpxZdAdm.geojsonModal
+        .querySelector('.twpx-zd-modal-close')
+        .addEventListener('click', (e) => {
+          e.preventDefault();
+          twpxZdAdm.hideModal();
+        });
+      //opaco
+      twpxZdAdm.geojsonModal
+        .querySelector('.twpx-zd-modal-body')
+        .addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
 
-          //center the map
-          twpxZdAdm.ymapMap.panTo(coords);
-        } else {
-          // Если переданные координаты не попадают в полигон, то задаём стандартную прозрачность полигонов.
-          deliveryZones.setOptions('fillOpacity', 0.4);
-          // Перемещаем метку по переданным координатам.
-          deliveryPoint.geometry.setCoordinates(coords);
-          // Задаём контент балуна и метки.
-          deliveryPoint.properties.set({
-            balloonContent: BX.message('TWINPX_JS_CALL'),
-          });
-          // Перекрашиваем метку в чёрный цвет.
-          deliveryPoint.options.set('iconColor', 'black');
-        }
-
-        function getAddress(obj) {
-          var address = [
-            obj.getThoroughfare(),
-            obj.getPremiseNumber(),
-            obj.getPremise(),
-          ].join(' ');
-          if (address.trim() === '') {
-            address = obj.getAddressLine();
-          }
-          return address;
-        }
-      }
+      twpxZdAdm.geojsonModal.addEventListener('click', (e) => {
+        e.preventDefault();
+        twpxZdAdm.hideModal();
+      });
     },
     initSettingsForm() {
       //settings form submit button
