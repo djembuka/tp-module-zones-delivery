@@ -219,7 +219,7 @@ window.addEventListener('DOMContentLoaded', () => {
       });
       //add form submit button
       twpxZdAdm.addForm
-        .querySelector('.twpx-zd-amd-btn--save')
+        .querySelector('.twpx-zd-adm__buttons .twpx-zd-amd-btn--save')
         .addEventListener('click', (e) => {
           twpxZdAdm.formSubmit(e, twpxZdAdm.addForm, twpxZdAdm.addFormSubmit);
         });
@@ -250,7 +250,6 @@ window.addEventListener('DOMContentLoaded', () => {
       polygons.forEach((p) => {
         p.properties.id = Math.round(Math.random() * 10000);
       });
-      console.log(polygons);
 
       if (twpxZdAdm.geojsonYmap) {
         twpxZdAdm.geojsonYmap.destroy();
@@ -378,18 +377,27 @@ window.addEventListener('DOMContentLoaded', () => {
             twpxZdAdm.addForm.querySelector('#twpxZdPolygons');
           const propsInput = twpxZdAdm.addForm.querySelector('#twpxZdProps');
 
-          polygonInput.value = JSON.stringify(
-            Object.values(twpxZdAdm.geojsonStorage)
-              .filter((v) => v.checked)
-              .map((v) => v.polygon.geometry.coordinates[0])
-          );
-          polygonInput.focus();
+          const polygonInputValue = Object.values(twpxZdAdm.geojsonStorage)
+            .filter((v) => v.checked)
+            .map((v) => v.polygon.geometry.coordinates[0]);
+
+          if (polygonInputValue && polygonInputValue.length) {
+            polygonInput.value = JSON.stringify(
+              Object.values(twpxZdAdm.geojsonStorage)
+                .filter((v) => v.checked)
+                .map((v) => v.polygon.geometry.coordinates[0])
+            );
+            polygonInput.focus();
+          }
 
           if (twpxZdAdm.geojsonChosenProperties) {
             delete twpxZdAdm.geojsonChosenProperties.id;
+
+            propsInput.value = JSON.stringify(
+              twpxZdAdm.geojsonChosenProperties
+            );
+            propsInput.focus();
           }
-          propsInput.value = JSON.stringify(twpxZdAdm.geojsonChosenProperties);
-          propsInput.focus();
           twpxZdAdm.hideModal();
         });
       //close button
