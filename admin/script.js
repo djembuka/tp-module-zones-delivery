@@ -5,7 +5,7 @@ window.addEventListener('DOMContentLoaded', () => {
     idHidden: document.getElementById('twpxZdIdHidden'),
     addForm: document.getElementById('twpxZdAddForm'),
     geojsonFileInput: document.getElementById('twpxZdGeojsonFileInput'),
-    geojsonModal: document.getElementById('TwpxZdGeojsonModal'),
+    geojsonModal: document.getElementById('twpxZdGeojsonModal'),
     geojsonYmap: undefined,
     geojsonChosenProperties: undefined,
     geojsonStorage: {},
@@ -206,7 +206,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const file = twpxZdAdm.geojsonFileInput.files[0];
 
         if (file && file.name && !file.name.endsWith('geojson')) {
-          console.log('File is not a geojson.', file.name, file);
+          alert('File is not a geojson.', file.name, file);
           return;
         }
 
@@ -244,6 +244,9 @@ window.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         twpxZdAdm.geojsonModal.classList.remove('twpx-zd-modal--z');
       }, 500);
+
+      twpxZdAdm.geojsonStorage = {};
+      delete twpxZdAdm.geojsonChosenProperties;
     },
     ymapGeojson(polygons) {
       //create id
@@ -292,6 +295,28 @@ window.addEventListener('DOMContentLoaded', () => {
           strokeOpacity: obj.properties.get('stroke-opacity'),
         });
 
+        obj.events.add('mouseenter', () => {
+          obj.options.set({
+            fillOpacity: 0.5,
+          });
+        });
+
+        obj.events.add('mouseleave', () => {
+          let opacity = 0.6;
+          const id = obj.properties.get('id');
+          const st = twpxZdAdm.geojsonStorage[id];
+
+          if (!st) return;
+
+          if (st.checked) {
+            opacity = 1;
+          }
+
+          obj.options.set({
+            fillOpacity: opacity,
+          });
+        });
+
         obj.events.add('click', (e) => {
           e.stopPropagation();
 
@@ -308,11 +333,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
             if (!chosenLength) {
               twpxZdAdm.geojsonChosenProperties = st.polygon.properties;
+              obj.options.set({
+                fillOpacity: 1,
+              });
             } else if (twpxZdAdm.geojsonChosenProperties) {
               const p = twpxZdAdm.geojsonChosenProperties;
               obj.options.set({
                 fillColor: p.fill,
-                fillOpacity: p['fill-opacity'],
+                fillOpacity: 1,
                 strokeColor: p.stroke,
                 strokeWidth: p['stroke-width'],
                 strokeOpacity: p['stroke-opacity'],
@@ -327,7 +355,7 @@ window.addEventListener('DOMContentLoaded', () => {
               const p = st.polygon.properties;
               obj.options.set({
                 fillColor: p.fill,
-                fillOpacity: p['fill-opacity'],
+                fillOpacity: 0.6,
                 strokeColor: p.stroke,
                 strokeWidth: p['stroke-width'],
                 strokeOpacity: p['stroke-opacity'],
@@ -341,29 +369,6 @@ window.addEventListener('DOMContentLoaded', () => {
       twpxZdAdm.polygonsBounds = deliveryZones.getBounds();
       twpxZdAdm.geojsonYmap.setBounds(twpxZdAdm.polygonsBounds, {
         checkZoomRange: true,
-      });
-
-      //find center of each polygon
-      polygons.forEach((p) => {
-        const coordinates = p.geometry.coordinates[0];
-        const x =
-          coordinates.reduce((acc, cur) => acc + cur[0], 0) /
-          coordinates.length;
-        const y =
-          coordinates.reduce((acc, cur) => acc + cur[1], 0) /
-          coordinates.length;
-
-        const circle = new ymaps.Circle(
-          [[x, y], 100],
-          {},
-          {
-            fillColor: '#fff',
-            strokeColor: '#fff',
-            strokeWidth: 1,
-          }
-        );
-
-        twpxZdAdm.geojsonYmap.geoObjects.add(circle);
       });
     },
     geojsonModalEvents() {
@@ -987,7 +992,6 @@ window.addEventListener('DOMContentLoaded', () => {
       }, 100);
     },
     removedItemAnimation(removedItem) {
-      console.log(removedItem.clientHeight);
       removedItem.style.height = removedItem.clientHeight + 'px';
       removedItem.style.minHeight = '0px';
       setTimeout(() => {
