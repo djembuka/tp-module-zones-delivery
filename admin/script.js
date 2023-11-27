@@ -252,6 +252,9 @@ window.addEventListener('DOMContentLoaded', () => {
       //create id
       polygons.forEach((p) => {
         p.properties.id = Math.round(Math.random() * 10000);
+        p.geometry.coordinates[0].map((arr) => {
+          arr.reverse();
+        });
       });
 
       if (twpxZdAdm.geojsonYmap) {
@@ -384,7 +387,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
           const polygonInputValue = Object.values(twpxZdAdm.geojsonStorage)
             .filter((v) => v.checked)
-            .map((v) => v.polygon.geometry.coordinates[0]);
+            .map((v) =>
+              v.polygon.geometry.coordinates[0].map((c) => c.reverse())
+            );
 
           if (polygonInputValue && polygonInputValue.length) {
             polygonInput.value = JSON.stringify(
