@@ -30,8 +30,6 @@ body {
   max-height: calc(100vh - 40px);
   background-color: #fff;
   border-radius: 8px;
-  display: grid;
-  grid-template-rows: 100px 1fr 150px;
   z-index: 10;
 }
 
@@ -49,80 +47,106 @@ body {
 }
 
 .twpx-zd-modal-title {
+  position: absolute;
+  top: 16px;
+  left: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-family: Montserrat, 'Arial', sans-serif;
-  font-size: 32px;
-  color: #232339;
-  padding: 0 50px;
-  position: relative;
-  text-align: center;
+  font-size: 14px;
+  margin-bottom: var(--slr2-gap-middle);
+  height: 32px;
+  border-radius: 16px;
+  padding: 0 16px;
+  background-color: #585c65;
+  color: #fff;
+  z-index: 10;
+}
+
+.twpx-zd-modal-title span:nth-child(1) {
+  display: block;
+}
+.twpx-zd-modal-title span:nth-child(2) {
+  display: none;
 }
 .twpx-zd-modal-close {
   position: absolute;
-  transform: translateY(-50%);
-  top: 50%;
-  right: 28px;
-  width: 28px;
-  height: 28px;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
   cursor: pointer;
-  -webkit-transition: opacity 0.3s ease;
-  transition: opacity 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  border-radius: 50%;
   z-index: 10;
 }
 .twpx-zd-modal-close:hover {
-  opacity: 0.7;
+  background-color: #585c65;
 }
-.twpx-zd-modal-close:before {
+.twpx-zd-modal-close:before,
+.twpx-zd-modal-close:after {
   content: '';
   position: absolute;
-  top: 13px;
-  right: 2px;
-  border-top: 1px solid #ff0000;
-  width: 24px;
+  top: 16px;
+  right: 5px;
+  border-top: 1px solid #575c66;
+  width: 21px;
   -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
   z-index: 10;
 }
 .twpx-zd-modal-close:after {
-  content: '';
-  position: absolute;
-  top: 13px;
-  right: 2px;
-  border-top: 1px solid #ff0000;
-  width: 24px;
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
-  z-index: 10;
+}
+.twpx-zd-modal-close:hover:before,
+.twpx-zd-modal-close:hover:after {
+  border-top: 1px solid #fff;
 }
 
 .twpx-zd-modal-content {
-  display: flex;
+  height: 100%;
 }
 #TwpxZdYmap {
   width: 100%;
+  height: 100%;
 }
 
 .twpx-zd-modal-footer {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 80px;
+  border-radius: 48px;
+  background-color: #fff;
+  padding: 0 16px;
 }
 
 .twpx-zd-modal-btn {
-  width: 320px;
-  height: 64px;
+  width: 180px;
+  height: 48px;
   border-radius: 6px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: Montserrat, 'Arial', sans-serif;
-  font-size: 18px;
+  font-family: 'Open Sans', 'Arial', sans-serif;
+  font-size: 12px;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  text-transform: uppercase;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
   cursor: pointer;
-  margin: 0 10px;
+  margin: 0 4px;
+  color: #535c69;
+  border-radius: 24px;
 }
 
 .twpx-zd-balloon {
@@ -178,43 +202,45 @@ body {
 }
 @media (max-width: 767px) {
   .twpx-zd-modal-title {
-    font-size: 20px;
+    font-size: 14px;
+  }
+  .twpx-zd-modal-title span:nth-child(1) {
+    display: none;
+  }
+  .twpx-zd-modal-title span:nth-child(2) {
+    display: block;
   }
   .twpx-zd-modal-close {
     right: 20px;
   }
   .twpx-zd-modal-body {
-    width: calc(100vw - 40px);
-    height: calc(100vh - 40px);
-    grid-template-rows: 100px 1fr 208px;
+    width: calc(100vw - 32px);
+    height: calc(100vh - 60px);
+    border-radius: 10px;
+    overflow: hidden;
   }
   .twpx-zd-modal-footer {
-    flex-direction: column-reverse;
-    padding: 20px 20px;
   }
   .twpx-zd-modal-btn {
     margin: 0;
-    width: 100%;
-  }
-  .twpx-zd-modal-btn--close {
-    margin-bottom: 20px;
+    width: 50%;
+    min-width: 130px;
   }
 }
 .twpx-zd-modal-btn.twpx-zd-modal-btn--default {
-  background-color: #9a00ff;
-  color: #fff;
+  background-color: #bbed21;
+  color: #535c69;
 }
 .twpx-zd-modal-btn.twpx-zd-modal-btn--default:hover {
-  background-color: #6c00b3;
-  color: #fff;
+  background-color: #d2f95f;
+  color: #535c69;
 }
 .twpx-zd-modal-btn.twpx-zd-modal-btn--close {
-  background-color: #f5f4f5;
-  color: #000;
+  background-color: #fff;
+  color: #535c69;
 }
 .twpx-zd-modal-btn.twpx-zd-modal-btn--close:hover {
-  background-color: #efefef;
-  color: #000;
+  opacity: 0.7;
 }
 .twpx-zd-modal-btn.twpx-zd-modal-btn--disabled {
   background-color: #f5f5f5;
