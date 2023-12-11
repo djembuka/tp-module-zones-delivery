@@ -29,7 +29,8 @@ body {
   height: 890px;
   max-height: calc(100vh - 40px);
   background-color: #fff;
-  border-radius: 8px;
+  border-radius: 15px;
+  overflow: hidden;
   z-index: 10;
 }
 
@@ -90,9 +91,9 @@ body {
 .twpx-zd-modal-close:after {
   content: '';
   position: absolute;
-  top: 16px;
+  top: 15px;
   right: 5px;
-  border-top: 1px solid #575c66;
+  border-top: 2px solid #575c66;
   width: 21px;
   -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
@@ -104,7 +105,7 @@ body {
 }
 .twpx-zd-modal-close:hover:before,
 .twpx-zd-modal-close:hover:after {
-  border-top: 1px solid #fff;
+  border-top: 2px solid #fff;
 }
 
 .twpx-zd-modal-content {
@@ -216,7 +217,7 @@ body {
   .twpx-zd-modal-body {
     width: calc(100vw - 32px);
     height: calc(100vh - 60px);
-    border-radius: 10px;
+    border-radius: 15px;
     overflow: hidden;
   }
   .twpx-zd-modal-footer {
