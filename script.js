@@ -35,6 +35,11 @@ window.addEventListener('load', () => {
   );
   TwinpxZonesDelivery.addressControl;
 
+  //polygons sort
+  TwinpxZonesDelivery.polygons.features.sort(
+    (a, b) => Number(b['z-index']) - Number(a['z-index'])
+  );
+
   //methods
   TwinpxZonesDelivery.showModal = function () {
     TwinpxZonesDelivery.getCenterMapsFromCookies();
@@ -254,11 +259,11 @@ window.addEventListener('load', () => {
     formData.append('zid', TwinpxZonesDelivery.chosenZoneId);
     formData.append('coords', TwinpxZonesDelivery.chosenCoords);
     let response = await fetch(
-      `/bitrix/services/main/ajax.php?mode=class&c=twinpx:zones.delivery&action=setZone`,
+      `/bitrix/services/main/ajax.php?mode=class&c=twinpx:zones.delivery&action=setZone` /*,
       {
         method: 'POST',
         body: formData,
-      }
+      }*/
     );
 
     let result = await response.json();

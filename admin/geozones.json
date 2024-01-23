@@ -41,11 +41,12 @@
           "stroke": "#1bad03",
           "stroke-width": "1",
           "stroke-opacity": 0.9,
-          "title": "\u0417\u043e\u043d\u0430 4",
+          "title": "\u0417\u043e\u043d\u0430 4 z-index 0",
           "min-price": "450",
           "added-value": "50",
           "max-volume": "10"
-        }
+        },
+        "z-index": 0
       },
       {
         "type": "Feature",
@@ -83,7 +84,8 @@
           "min-price": "450",
           "added-value": "50",
           "max-volume": "15"
-        }
+        },
+        "z-index": 10
       },
       {
         "type": "Feature",
@@ -138,37 +140,8 @@
           "min-price": "80",
           "added-value": "7",
           "max-volume": "10"
-        }
-      },
-      {
-        "type": "Feature",
-        "id": "11",
-        "geometry": {
-          "type": "Polygon",
-          "coordinates": [
-            [
-              [37.61366406388774, 55.76245253890386],
-              [37.60542431779362, 55.75722568531605],
-              [37.60542431779362, 55.749093625691316],
-              [37.60851422257906, 55.73960407078289],
-              [37.63701001115348, 55.73727974483947],
-              [37.653146180587235, 55.74541427746941],
-              [37.64730969377037, 55.75954881821363],
-              [37.61366406388774, 55.76245253890386]
-            ]
-          ]
         },
-        "properties": {
-          "fill": "#ed4543",
-          "fill-opacity": 0.2,
-          "stroke": "#ed4543",
-          "stroke-width": "1",
-          "stroke-opacity": 0.9,
-          "title": "\u0417\u043e\u043d\u0430 1",
-          "min-price": "50",
-          "added-value": "6",
-          "max-volume": "10"
-        }
+        "z-index": 2
       },
 
       {
@@ -212,7 +185,39 @@
           "min-price": "450",
           "added-value": "50",
           "max-volume": "10"
-        }
+        },
+        "z-index": 4
+      },
+      {
+        "type": "Feature",
+        "id": "11",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [37.71366406388774, 55.76245253890386],
+              [37.70542431779362, 55.75722568531605],
+              [37.70542431779362, 55.749093625691316],
+              [37.70851422257906, 55.73960407078289],
+              [37.73701001115348, 55.73727974483947],
+              [37.753146180587235, 55.74541427746941],
+              [37.74730969377037, 55.75954881821363],
+              [37.71366406388774, 55.76245253890386]
+            ]
+          ]
+        },
+        "properties": {
+          "fill": "#ed4543",
+          "fill-opacity": 0.2,
+          "stroke": "#ed4543",
+          "stroke-width": "1",
+          "stroke-opacity": 0.9,
+          "title": "\u0417\u043e\u043d\u0430 1 z-index 5",
+          "min-price": "50",
+          "added-value": "6",
+          "max-volume": "10"
+        },
+        "z-index": 5
       },
       {
         "type": "Feature",
@@ -250,7 +255,8 @@
           "min-price": "450",
           "added-value": "50",
           "max-volume": "15"
-        }
+        },
+        "z-index": 5
       },
       {
         "type": "Feature",
@@ -305,7 +311,8 @@
           "min-price": "80",
           "added-value": "7",
           "max-volume": "10"
-        }
+        },
+        "z-index": 6
       },
       {
         "type": "Feature",
@@ -335,7 +342,8 @@
           "min-price": "50",
           "added-value": "6",
           "max-volume": "10"
-        }
+        },
+        "z-index": 7
       }
     ]
   },
