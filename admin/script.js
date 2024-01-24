@@ -132,13 +132,11 @@ window.addEventListener('DOMContentLoaded', () => {
           }
         }, twpxZdAdm.fetchTimeout);
         try {
-          response = await fetch(
-            TwinpxZonesDelivery.activityUrl /*, {
+          response = await fetch(TwinpxZonesDelivery.activityUrl, {
             body: formData,
             method: 'POST',
             signal: controller.signal,
-          }*/
-          );
+          });
 
           result = await response.json();
         } catch (err) {
@@ -550,12 +548,10 @@ window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('twpxZdYmap').classList.add('load-circle');
 
             try {
-              response = await fetch(
-                TwinpxZonesDelivery.geozonesUrl /*, {
+              response = await fetch(TwinpxZonesDelivery.geozonesUrl, {
                 method: 'POST',
                 signal: controller.signal,
-              }*/
-              );
+              });
 
               result = await response.json();
 
@@ -967,11 +963,11 @@ window.addEventListener('DOMContentLoaded', () => {
       const editData = new FormData();
       editData.append('id', id);
       let response = await fetch(
-        twpxZdAdm.addForm.getAttribute('data-fill-action') /*,
+        twpxZdAdm.addForm.getAttribute('data-fill-action'),
         {
           method: 'POST',
           body: editData,
-        }*/
+        }
       );
       let result = await response.json();
 
