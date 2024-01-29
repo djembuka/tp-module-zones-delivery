@@ -37,7 +37,7 @@ window.addEventListener('load', () => {
 
   //polygons sort
   TwinpxZonesDelivery.polygons.features.sort(
-    (a, b) => Number(b['z-index']) - Number(a['z-index'])
+    (a, b) => Number(b.properties.zIndex) - Number(a.properties.zIndex)
   );
 
   //methods
@@ -391,9 +391,11 @@ window.addEventListener('load', () => {
                 strokeColor: obj.properties.get('stroke'),
                 strokeWidth: obj.properties.get('stroke-width'),
                 strokeOpacity: obj.properties.get('stroke-opacity'),
+                zIndex: obj.properties.get('zIndex'),
               });
               TwinpxZonesDelivery.zoneOpacity =
                 obj.properties.get('fill-opacity');
+
               /*obj.properties.set(
                 'balloonContent',
                 `Минимальная стоимость за 1 м<sup>3</sup>: ${obj.properties.get(
