@@ -44,9 +44,9 @@
           "title": "\u0417\u043e\u043d\u0430 4 z-index 0",
           "min-price": "450",
           "added-value": "50",
-          "max-volume": "10"
-        },
-        "z-index": 0
+          "max-volume": "10",
+          "zIndex": 0
+        }
       },
       {
         "type": "Feature",
@@ -83,9 +83,9 @@
           "title": "\u0417\u043e\u043d\u0430 3",
           "min-price": "450",
           "added-value": "50",
-          "max-volume": "15"
-        },
-        "z-index": 10
+          "max-volume": "15",
+          "zIndex": 10
+        }
       },
       {
         "type": "Feature",
@@ -139,9 +139,9 @@
           "title": "\u0417\u043e\u043d\u0430 2",
           "min-price": "80",
           "added-value": "7",
-          "max-volume": "10"
-        },
-        "z-index": 2
+          "max-volume": "10",
+          "zIndex": 2
+        }
       },
 
       {
@@ -184,9 +184,9 @@
           "title": "\u0417\u043e\u043d\u0430 4",
           "min-price": "450",
           "added-value": "50",
-          "max-volume": "10"
-        },
-        "z-index": 4
+          "max-volume": "10",
+          "zIndex": 4
+        }
       },
       {
         "type": "Feature",
@@ -215,9 +215,9 @@
           "title": "\u0417\u043e\u043d\u0430 1 z-index 5",
           "min-price": "50",
           "added-value": "6",
-          "max-volume": "10"
-        },
-        "z-index": 5
+          "max-volume": "10",
+          "zIndex": 5
+        }
       },
       {
         "type": "Feature",
@@ -254,9 +254,9 @@
           "title": "\u0417\u043e\u043d\u0430 3",
           "min-price": "450",
           "added-value": "50",
-          "max-volume": "15"
-        },
-        "z-index": 5
+          "max-volume": "15",
+          "zIndex": 5
+        }
       },
       {
         "type": "Feature",
@@ -310,9 +310,9 @@
           "title": "\u0417\u043e\u043d\u0430 2",
           "min-price": "80",
           "added-value": "7",
-          "max-volume": "10"
-        },
-        "z-index": 6
+          "max-volume": "10",
+          "zIndex": 6
+        }
       },
       {
         "type": "Feature",
@@ -341,9 +341,9 @@
           "title": "\u0417\u043e\u043d\u0430 1",
           "min-price": "50",
           "added-value": "6",
-          "max-volume": "10"
-        },
-        "z-index": 7
+          "max-volume": "10",
+          "zIndex": 7
+        }
       }
     ]
   },
