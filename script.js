@@ -489,7 +489,7 @@ window.addEventListener('load', () => {
     }
   };
 
-  TwinpxZonesDelivery.highlightResult = function (obj) {
+  TwinpxZonesDelivery.highlightResult = async function (obj) {
     // Сохраняем координаты переданного объекта.
     var coords = obj.geometry
         ? obj.geometry.getCoordinates()
@@ -525,11 +525,19 @@ window.addEventListener('load', () => {
         TwinpxZonesDelivery.chosenZoneId = polygon.properties.get('id');
         TwinpxZonesDelivery.chosenZoneTitle = polygon.properties.get('title');
         TwinpxZonesDelivery.chosenAddress = getAddress(obj);
+
         //balloon
         TwinpxZonesDelivery.deliveryPoint.properties.set({
           balloonContent: `
-            <b>${polygon.properties.get('title')}</b>
-            <br>${TwinpxZonesDelivery.chosenAddress}
+          <div style="font: bold 18px 'Open Sans', Arial, sans-serif; margin-bottom: 17px;">${polygon.properties.get(
+            'title'
+          )}</div>
+          <div style="font: normal 14px 'Open Sans', Arial, sans-serif; margin-bottom: 2px;">${
+            TwinpxZonesDelivery.chosenAddress
+          }</div>
+          <div style="height: 30px; display: flex; align-items: center;">
+            <div style="width: 16px; height: 16px; animation: circle 1.3s infinite linear; border: 2px solid #d0d0d0; border-radius: 50%; border-right-color: transparent;"></div>
+          </div>
           `,
         });
         TwinpxZonesDelivery.deliveryPoint.balloon.open();
@@ -545,10 +553,18 @@ window.addEventListener('load', () => {
 
           TwinpxZonesDelivery.chosenAddress = getAddress(obj);
 
+          //balloon
           TwinpxZonesDelivery.deliveryPoint.properties.set({
             balloonContent: `
-              <b>${polygon.properties.get('title')}</b>
-              <br>${TwinpxZonesDelivery.chosenAddress}
+            <div style="font: bold 18px 'Open Sans', Arial, sans-serif; margin-bottom: 17px;">${polygon.properties.get(
+              'title'
+            )}</div>
+            <div style="font: normal 14px 'Open Sans', Arial, sans-serif; margin-bottom: 2px;">${
+              TwinpxZonesDelivery.chosenAddress
+            }</div>
+            <div style="height: 30px; display: flex; align-items: center;">
+              <div style="width: 16px; height: 16px; animation: circle 1.3s infinite linear; border: 2px solid #d0d0d0; border-radius: 50%; border-right-color: transparent;"></div>
+            </div>
             `,
           });
           TwinpxZonesDelivery.deliveryPoint.balloon.open();
@@ -561,6 +577,20 @@ window.addEventListener('load', () => {
       TwinpxZonesDelivery.btnDefault.classList.remove(
         'twpx-zd-modal-btn--disabled'
       );
+
+      //load the price
+      const price = await TwinpxZonesDelivery.getPrice();
+      TwinpxZonesDelivery.deliveryPoint.properties.set({
+        balloonContent: `
+          <div style="font: bold 18px 'Open Sans', Arial, sans-serif; margin-bottom: 17px;">${polygon.properties.get(
+            'title'
+          )}</div>
+          <div style="font: normal 14px 'Open Sans', Arial, sans-serif; margin-bottom: 2px;">${
+            TwinpxZonesDelivery.chosenAddress
+          }</div>
+          <div style="height: 30px; font: bold 14px 'Open Sans', Arial, sans-serif; display: flex; align-items: center;">${price}</div>
+        `,
+      });
     } else {
       TwinpxZonesDelivery.chosenZoneId = 0;
       TwinpxZonesDelivery.chosenZoneTitle = '';
@@ -686,6 +716,21 @@ window.addEventListener('load', () => {
     div.prepend(title);
 
     document.querySelector('#twpx-zd-showmodal').after(div);
+  };
+
+  TwinpxZonesDelivery.getPrice = async function () {
+    let result;
+    const promise = new Promise((res, rej) => {
+      setTimeout(() => {
+        res('300 рублей');
+      }, 2000);
+    });
+
+    await promise.then((res) => {
+      result = res;
+    });
+
+    return result;
   };
 
   TwinpxZonesDelivery.init = function () {
