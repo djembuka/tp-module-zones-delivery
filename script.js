@@ -541,10 +541,24 @@ window.addEventListener('load', () => {
           `,
         });
         TwinpxZonesDelivery.deliveryPoint.balloon.open();
+
+        //load the price
+        const price = await TwinpxZonesDelivery.getPrice();
+        TwinpxZonesDelivery.deliveryPoint.properties.set({
+          balloonContent: `
+          <div style="font: bold 18px 'Open Sans', Arial, sans-serif; margin-bottom: 17px;">${polygon.properties.get(
+            'title'
+          )}</div>
+          <div style="font: normal 14px 'Open Sans', Arial, sans-serif; margin-bottom: 2px;">${
+            TwinpxZonesDelivery.chosenAddress
+          }</div>
+          <div style="height: 30px; font: bold 14px 'Open Sans', Arial, sans-serif; display: flex; align-items: center;">${price}</div>
+        `,
+        });
       } else {
         // Если вы не хотите, чтобы при каждом перемещении метки отправлялся запрос к геокодеру,
         // закомментируйте код ниже.
-        ymaps.geocode(coords, { results: 1 }).then(function (res) {
+        ymaps.geocode(coords, { results: 1 }).then(async function (res) {
           //remember zone id
           TwinpxZonesDelivery.chosenZoneId = polygon.properties.get('id');
           TwinpxZonesDelivery.chosenZoneTitle = polygon.properties.get('title');
@@ -568,6 +582,20 @@ window.addEventListener('load', () => {
             `,
           });
           TwinpxZonesDelivery.deliveryPoint.balloon.open();
+
+          //load the price
+          const price = await TwinpxZonesDelivery.getPrice();
+          TwinpxZonesDelivery.deliveryPoint.properties.set({
+            balloonContent: `
+          <div style="font: bold 18px 'Open Sans', Arial, sans-serif; margin-bottom: 17px;">${polygon.properties.get(
+            'title'
+          )}</div>
+          <div style="font: normal 14px 'Open Sans', Arial, sans-serif; margin-bottom: 2px;">${
+            TwinpxZonesDelivery.chosenAddress
+          }</div>
+          <div style="height: 30px; font: bold 14px 'Open Sans', Arial, sans-serif; display: flex; align-items: center;">${price}</div>
+        `,
+          });
         });
       }
 
@@ -577,20 +605,6 @@ window.addEventListener('load', () => {
       TwinpxZonesDelivery.btnDefault.classList.remove(
         'twpx-zd-modal-btn--disabled'
       );
-
-      //load the price
-      const price = await TwinpxZonesDelivery.getPrice();
-      TwinpxZonesDelivery.deliveryPoint.properties.set({
-        balloonContent: `
-          <div style="font: bold 18px 'Open Sans', Arial, sans-serif; margin-bottom: 17px;">${polygon.properties.get(
-            'title'
-          )}</div>
-          <div style="font: normal 14px 'Open Sans', Arial, sans-serif; margin-bottom: 2px;">${
-            TwinpxZonesDelivery.chosenAddress
-          }</div>
-          <div style="height: 30px; font: bold 14px 'Open Sans', Arial, sans-serif; display: flex; align-items: center;">${price}</div>
-        `,
-      });
     } else {
       TwinpxZonesDelivery.chosenZoneId = 0;
       TwinpxZonesDelivery.chosenZoneTitle = '';
@@ -720,15 +734,35 @@ window.addEventListener('load', () => {
 
   TwinpxZonesDelivery.getPrice = async function () {
     let result;
-    const promise = new Promise((res, rej) => {
-      setTimeout(() => {
-        res('300 рублей');
-      }, 2000);
-    });
 
-    await promise.then((res) => {
-      result = res;
-    });
+    if (window.BX && BX.ajax) {
+      const promise = new Promise((res, rej) => {
+        BX.ajax
+          .runComponentAction('twinpx:zones.delivery', 'getZonePrice', {
+            mode: 'class', //это означает, что мы хотим вызывать действие из class.php или ajax.php
+            data: {
+              zid: TwinpxZonesDelivery.chosenZoneId,
+            }, //data {Object|FormData} данные будут автоматически замаплены на параметры метода
+          })
+          .then(
+            (response) => {
+              if (response.status === 'success') {
+                res(response.data);
+              } else {
+                console.log(response.errors);
+              }
+            },
+            (error) => {
+              //сюда будут приходить все ответы, у которых status !== 'success'
+              rej(error);
+            }
+          );
+      });
+
+      await promise.then((res) => {
+        result = res;
+      });
+    }
 
     return result;
   };

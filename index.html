@@ -43,6 +43,21 @@
             break;
         }
       };
+      window.BX.ajax = {
+        runComponentAction: function (name, method, options) {
+          switch (method) {
+            case 'getZonePrice':
+              return new Promise((res, rej) => {
+                res({
+                  status: 'success',
+                  data: '500 &#8381',
+                  errors: {},
+                });
+              });
+              break;
+          }
+        },
+      };
     </script>
 
     <script>
