@@ -776,6 +776,9 @@ window.addEventListener('DOMContentLoaded', () => {
         });
 
       function validateControl(reqInput) {
+        if (!reqInput.getAttribute('required')) {
+          return;
+        }
         if (reqInput.value.trim() === '') {
           if (!focusElement) {
             focusElement = reqInput;
