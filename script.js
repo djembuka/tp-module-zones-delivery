@@ -42,6 +42,8 @@ window.addEventListener('load', () => {
 
   //methods
   TwinpxZonesDelivery.showModal = function () {
+    //remove page scroll
+    document.querySelector('body').classList.add('twpx-zd-no-scroll');
     TwinpxZonesDelivery.getCenterMapsFromCookies();
     //show errors if needed
     if (!TwinpxZonesDelivery.ymapsUrl) {
@@ -118,6 +120,9 @@ window.addEventListener('load', () => {
   };
 
   TwinpxZonesDelivery.hideModal = function () {
+    //remove page scroll
+    document.querySelector('body').classList.remove('twpx-zd-no-scroll');
+
     TwinpxZonesDelivery.modal.classList.remove('twpx-zd-modal--show');
 
     setTimeout(() => {
