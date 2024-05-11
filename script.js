@@ -1,3 +1,7 @@
+class TwinpxZonesDelivery {
+  constructor() {}
+}
+
 window.addEventListener('load', () => {
   window.TwinpxZonesDelivery = window.TwinpxZonesDelivery || {};
 

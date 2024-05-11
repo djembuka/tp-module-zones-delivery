@@ -180,34 +180,18 @@
     </script>
 
     <script>
-      window.TwinpxZonesDelivery = window.TwinpxZonesDelivery || [
-        {
-          ymapsUrl:
-            '//api-maps.yandex.ru/2.1.50/?apikey=6934dd6e-0a33-4cde-bfcf-7d6c30eeddac&load=package.full&lang=ru-RU',
-          addressProperty: ['ADDRESS', 'ADDRESS2'],
-          addressInput: {
-            name: 'DELIVERY_ID',
-            value: '7',
-          },
-          centerMaps: 'Москва',
-          zones: { 123: '1. МКАД', 456: '2. ЦАО' },
-          chosenZoneTitle: '3. МКАД',
-          chosenZoneId: 345,
-        },
-        {
-          ymapsUrl:
-            '//api-maps.yandex.ru/2.1.50/?apikey=6934dd6e-0a33-4cde-bfcf-7d6c30eeddac&load=package.full&lang=ru-RU',
-          addressProperty: ['ADDRESS', 'ADDRESS2'],
-          addressInput: {
-            name: 'DELIVERY_ID',
-            value: '7',
-          },
-          centerMaps: 'Москва',
-          zones: { 123: '1. МКАД', 456: '2. ЦАО' },
-          chosenZoneTitle: '3. МКАД',
-          chosenZoneId: 345,
-        },
-      ];
+      window.TwinpxZonesDelivery = window.TwinpxZonesDelivery || {};
+      window.TwinpxZonesDelivery.ymapsUrl =
+        '//api-maps.yandex.ru/2.1.50/?apikey=6934dd6e-0a33-4cde-bfcf-7d6c30eeddac&load=package.full&lang=ru-RU';
+      window.TwinpxZonesDelivery.addressProperty = ['ADDRESS', 'ADDRESS2'];
+      window.TwinpxZonesDelivery.addressInput = {
+        name: 'DELIVERY_ID',
+        value: '7',
+      };
+      window.TwinpxZonesDelivery.centerMaps = 'Москва';
+      window.TwinpxZonesDelivery.zones = { 123: '1. МКАД', 456: '2. ЦАО' };
+      window.TwinpxZonesDelivery.chosenZoneTitle = '3. МКАД';
+      window.TwinpxZonesDelivery.chosenZoneId = 345;
     </script>
     <script src="//api-maps.yandex.ru/2.1.50/?apikey=6934dd6e-0a33-4cde-bfcf-7d6c30eeddac&load=package.full&lang=ru-RU&coordorder=longlat"></script>
     <script src="geozones.js"></script>
