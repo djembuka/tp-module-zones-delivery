@@ -1,4 +1,4 @@
-class TwinpxZonesDelivery {
+class TwinpxZonesDeliveryClass {
   constructor(zdObj) {
     //variables
     this.fetchTimeout = 20000;
@@ -735,8 +735,12 @@ window.addEventListener('load', () => {
     typeof window.TwinpxZonesDelivery === 'object' &&
     window.TwinpxZonesDelivery.forEach
   ) {
+    window.TwinpxZonesDelivery.showModal = () => {
+      //узнать активный чекбокс
+      //взять тот экземпляр класса, который относится к этому чекбоксу и вызвать окно
+    };
     window.TwinpxZonesDelivery.forEach((zdObj) => {
-      new TwinpxZonesDelivery(zdObj);
+      new TwinpxZonesDeliveryClass(zdObj);
     });
   }
 });
