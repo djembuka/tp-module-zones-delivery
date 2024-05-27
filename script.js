@@ -201,13 +201,29 @@ class TwinpxZonesDeliveryClass {
 
           let promise = new Promise(async (res, rej) => {
             if (!this.polygons) {
-              let response = await fetch('geozones-response.json');
-              this.polygons = await response.json();
-            }
-            if (this.polygons) {
-              res(this.polygons);
-            } else {
-              rej('');
+              if (window.BX) {
+                BX.ajax
+                  .runComponentAction(
+                    'twinpx:zones.delivery',
+                    'getDeliveryZone',
+                    {
+                      mode: 'class',
+                      method: 'post', //По умолчанию, POST.
+                      data: { id: id }, //ID зоны доставки
+                    }
+                  )
+                  .then(
+                    (response) => {
+                      this.polygons = response;
+                      if (this.polygons) {
+                        res(this.polygons);
+                      }
+                    },
+                    (error) => {
+                      rej(error);
+                    }
+                  );
+              }
             }
           });
 
@@ -368,13 +384,29 @@ class TwinpxZonesDeliveryClass {
           //get zones
           let promise = new Promise(async (res, rej) => {
             if (!this.polygons) {
-              let response = await fetch('geozones-response.json');
-              this.polygons = await response.json();
-            }
-            if (this.polygons) {
-              res(this.polygons);
-            } else {
-              rej('');
+              if (window.BX) {
+                BX.ajax
+                  .runComponentAction(
+                    'twinpx:zones.delivery',
+                    'getDeliveryZone',
+                    {
+                      mode: 'class',
+                      method: 'post', //По умолчанию, POST.
+                      data: { id: id }, //ID зоны доставки
+                    }
+                  )
+                  .then(
+                    (response) => {
+                      this.polygons = response;
+                      if (this.polygons) {
+                        res(this.polygons);
+                      }
+                    },
+                    (error) => {
+                      rej(error);
+                    }
+                  );
+              }
             }
           });
 
@@ -733,14 +765,30 @@ window.addEventListener('load', () => {
   if (
     window.TwinpxZonesDelivery &&
     typeof window.TwinpxZonesDelivery === 'object' &&
-    window.TwinpxZonesDelivery.forEach
+    window.TwinpxZonesDelivery.items &&
+    typeof window.TwinpxZonesDelivery.items === 'object' &&
+    window.TwinpxZonesDelivery.items.forEach
   ) {
     window.TwinpxZonesDelivery.showModal = () => {
       //узнать активный чекбокс
-      //взять тот экземпляр класса, который относится к этому чекбоксу и вызвать окно
+      window.TwinpxZonesDelivery.items.forEach((item) => {
+        document
+          .querySelectorAll(`[name=${item.addressInput.name}]`)
+          .forEach((checkbox) => {
+            if (
+              checkbox.value === item.addressInput.value &&
+              checkbox.checked
+            ) {
+              if (item.inst) {
+                //взять тот экземпляр класса, который относится к этому чекбоксу и вызвать окно
+                item.inst.showModal();
+              }
+            }
+          });
+      });
     };
-    window.TwinpxZonesDelivery.forEach((zdObj) => {
-      new TwinpxZonesDeliveryClass(zdObj);
+    window.TwinpxZonesDelivery.items.forEach((zdObj) => {
+      zdObj.inst = new TwinpxZonesDeliveryClass(zdObj);
     });
   }
 });
