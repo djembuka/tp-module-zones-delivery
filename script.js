@@ -1,121 +1,100 @@
-class TwinpxZonesDeliveryClass {
-  constructor(zdObj) {
-    //variables
-    this.fetchTimeout = 20000;
-    this.zones = zdObj.zones || {};
-    this.ymapsUrl = zdObj.ymapsUrl;
-    this.addressProperty = zdObj.addressProperty;
-    this.addressInput = zdObj.addressInput;
-    this.centerMaps = zdObj.centerMaps;
-    this.chosenZoneTitle = zdObj.chosenZoneTitle;
-    this.chosenZoneId = zdObj.chosenZoneId;
+window.addEventListener('load', () => {
+  window.TwinpxZonesDelivery = window.TwinpxZonesDelivery || {};
 
-    // this.chosenZoneId;
-    // this.chosenZoneTitle;
-    this.zoneOpacity = 0.1;
-    this.ymapsMap;
-    this.deliveryPoint;
-    this.chosenAddressWithCity;
+  //variables
+  TwinpxZonesDelivery.fetchTimeout = 20000;
+  TwinpxZonesDelivery.zones = window.TwinpxZonesDelivery.zones || {};
+  TwinpxZonesDelivery.chosenZoneId;
+  TwinpxZonesDelivery.chosenZoneTitle;
+  TwinpxZonesDelivery.zoneOpacity = 0.1;
+  TwinpxZonesDelivery.ymapsMap;
+  TwinpxZonesDelivery.deliveryPoint;
+  TwinpxZonesDelivery.chosenAddressWithCity;
+  TwinpxZonesDelivery.noDeliveryFlag = false;
 
-    //elems
-    this.modal = document.getElementById('TwpxZdModal');
-    this.modalBody = this.modal.querySelector('.twpx-zd-modal-body');
-    this.modalClose = this.modal.querySelector('.twpx-zd-modal-close');
-    this.btnDefault = this.modal.querySelector('.twpx-zd-modal-btn--default');
-    this.btnClose = this.modal.querySelector('.twpx-zd-modal-btn--close');
-    this.ymap = this.modal.querySelector('#TwpxZdYmap');
-    this.modalContent = this.modal.querySelector('.twpx-zd-modal-content');
-    this.modalError = this.modal.querySelector('.twpx-zd-modal-error');
-    this.addressControl;
+  //elems
+  TwinpxZonesDelivery.modal = document.getElementById('TwpxZdModal');
+  TwinpxZonesDelivery.modalBody = TwinpxZonesDelivery.modal.querySelector(
+    '.twpx-zd-modal-body'
+  );
+  TwinpxZonesDelivery.modalClose = TwinpxZonesDelivery.modal.querySelector(
+    '.twpx-zd-modal-close'
+  );
+  TwinpxZonesDelivery.btnDefault = TwinpxZonesDelivery.modal.querySelector(
+    '.twpx-zd-modal-btn--default'
+  );
+  TwinpxZonesDelivery.btnClose = TwinpxZonesDelivery.modal.querySelector(
+    '.twpx-zd-modal-btn--close'
+  );
+  TwinpxZonesDelivery.ymap =
+    TwinpxZonesDelivery.modal.querySelector('#TwpxZdYmap');
+  TwinpxZonesDelivery.modalContent = TwinpxZonesDelivery.modal.querySelector(
+    '.twpx-zd-modal-content'
+  );
+  TwinpxZonesDelivery.modalError = TwinpxZonesDelivery.modal.querySelector(
+    '.twpx-zd-modal-error'
+  );
+  TwinpxZonesDelivery.addressControl;
 
-    this.init();
-    this.addEvents();
-  }
-
-  init() {
-    this.initAddressControl();
-    this.ymapsReady();
-    this.onBeforeSendRequest();
-    this.showZoneTitle();
-  }
-
-  addEvents() {
-    this.modalBody.addEventListener('click', (e) => {
-      e.stopPropagation();
-    });
-
-    this.modal.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.hideModal();
-    });
-
-    this.modalClose.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.hideModal();
-    });
-
-    this.btnClose.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.hideModal();
-    });
-
-    this.btnDefault.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.sendZoneId();
-    });
-  }
+  //polygons sort
+  TwinpxZonesDelivery.polygons.features.sort(
+    (a, b) => Number(b.properties.zIndex) - Number(a.properties.zIndex)
+  );
 
   //methods
-  showModal() {
+  TwinpxZonesDelivery.showModal = function () {
     //remove page scroll
     document.querySelector('body').classList.add('twpx-zd-no-scroll');
-    this.getCenterMapsFromCookies();
+    TwinpxZonesDelivery.getCenterMapsFromCookies();
     //show errors if needed
-    if (!this.ymapsUrl) {
-      this.showError(BX.message('TWINPX_JS_NO_YMAP_KEY'));
-      this.modal.classList.add('twpx-zd-modal--show');
-      this.modal.classList.add('twpx-zd-modal--z');
+    if (!TwinpxZonesDelivery.ymapsUrl) {
+      TwinpxZonesDelivery.showError(BX.message('TWINPX_JS_NO_YMAP_KEY'));
+      TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--show');
+      TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--z');
       return;
-    } else if (!this.centerMaps) {
-      this.showError(BX.message('TWINPX_JS_NO_REGION'));
-      this.modal.classList.add('twpx-zd-modal--show');
-      this.modal.classList.add('twpx-zd-modal--z');
+    } else if (!TwinpxZonesDelivery.centerMaps) {
+      TwinpxZonesDelivery.showError(BX.message('TWINPX_JS_NO_REGION'));
+      TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--show');
+      TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--z');
       return;
-    } else if (this.ymapsMap) {
+    } else if (TwinpxZonesDelivery.ymapsMap) {
       //geo code
-      const zdGeocoder = ymaps.geocode(this.centerMaps, {
+      const zdGeocoder = ymaps.geocode(TwinpxZonesDelivery.centerMaps, {
         results: 1,
       });
 
       zdGeocoder.then(async (res) => {
         let firstGeoObject = res.geoObjects.get(0);
 
-        this.highlightResult(firstGeoObject);
+        TwinpxZonesDelivery.highlightResult(firstGeoObject);
 
         //let firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
-        this.regionBounds = firstGeoObject.properties.get('boundedBy');
-        //this.chosenCoords = firstGeoObjectCoords;
-        this.ymapsMap.setBounds(this.regionBounds);
+        TwinpxZonesDelivery.regionBounds =
+          firstGeoObject.properties.get('boundedBy');
+        //TwinpxZonesDelivery.chosenCoords = firstGeoObjectCoords;
+        TwinpxZonesDelivery.ymapsMap.setBounds(
+          TwinpxZonesDelivery.regionBounds
+        );
 
-        this.modal.classList.add('twpx-zd-modal--show');
-        this.modal.classList.add('twpx-zd-modal--z');
+        TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--show');
+        TwinpxZonesDelivery.modal.classList.add('twpx-zd-modal--z');
       });
     }
-  }
+  };
 
-  getCenterMapsFromCookies() {
-    this.centerMaps =
+  TwinpxZonesDelivery.getCenterMapsFromCookies = function () {
+    TwinpxZonesDelivery.centerMaps =
       decodeURI(
         document.cookie.replace(
           /(?:(?:^|.*;\s*)ZONE_LOCATION\s*\=\s*([^;]*).*$)|^.*$/,
           '$1'
         )
-      ) || this.centerMaps;
-  }
+      ) || TwinpxZonesDelivery.centerMaps;
+  };
 
-  getChosenZoneFromCookies() {
+  TwinpxZonesDelivery.getChosenZoneFromCookies = function () {
     //id
-    this.chosenZoneId =
+    TwinpxZonesDelivery.chosenZoneId =
       decodeURI(
         document.cookie.replace(
           /(?:(?:^|.*;\s*)ZONE_ID\s*\=\s*([^;]*).*$)|^.*$/,
@@ -123,62 +102,101 @@ class TwinpxZonesDeliveryClass {
         )
       ) || 0;
     //title
-    this.chosenZoneTitle = this.zones[this.chosenZoneId] || '';
-  }
+    TwinpxZonesDelivery.chosenZoneTitle =
+      TwinpxZonesDelivery.zones[TwinpxZonesDelivery.chosenZoneId] || '';
+  };
 
-  showError(message) {
-    this.modalContent.classList.add('twpx-zd-modal-content--error');
-    this.modalError.innerHTML = `${message}`;
-  }
+  TwinpxZonesDelivery.showError = function (message) {
+    TwinpxZonesDelivery.modalContent.classList.add(
+      'twpx-zd-modal-content--error'
+    );
+    TwinpxZonesDelivery.modalError.innerHTML = `${message}`;
+  };
 
-  hideError() {
-    this.modalContent.classList.remove('twpx-zd-modal-content--error');
-    this.modalError.innerHtml = ``;
-  }
+  TwinpxZonesDelivery.hideError = function () {
+    TwinpxZonesDelivery.modalContent.classList.remove(
+      'twpx-zd-modal-content--error'
+    );
+    TwinpxZonesDelivery.modalError.innerHtml = ``;
+  };
 
-  hideModal() {
+  TwinpxZonesDelivery.hideModal = function () {
     //remove page scroll
     document.querySelector('body').classList.remove('twpx-zd-no-scroll');
 
-    this.modal.classList.remove('twpx-zd-modal--show');
+    TwinpxZonesDelivery.modal.classList.remove('twpx-zd-modal--show');
 
     setTimeout(() => {
-      this.modal.classList.remove('twpx-zd-modal--z');
+      TwinpxZonesDelivery.modal.classList.remove('twpx-zd-modal--z');
     }, 500);
-  }
+  };
 
-  findAddressControl() {
-    if (this.addressProperty && this.addressProperty.forEach) {
-      this.addressControl = undefined;
-      this.addressProperty.forEach((name) => {
-        this.addressControl =
-          document.querySelector(`[name=${name}]`) || this.addressControl;
+  //events
+  TwinpxZonesDelivery.modalBody.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  TwinpxZonesDelivery.modal.addEventListener('click', (e) => {
+    e.preventDefault();
+    TwinpxZonesDelivery.hideModal();
+  });
+
+  TwinpxZonesDelivery.modalClose.addEventListener('click', (e) => {
+    e.preventDefault();
+    TwinpxZonesDelivery.hideModal();
+  });
+
+  TwinpxZonesDelivery.btnClose.addEventListener('click', (e) => {
+    e.preventDefault();
+    TwinpxZonesDelivery.hideModal();
+  });
+
+  TwinpxZonesDelivery.findAddressControl = function () {
+    if (
+      TwinpxZonesDelivery.addressProperty &&
+      TwinpxZonesDelivery.addressProperty.forEach
+    ) {
+      TwinpxZonesDelivery.addressControl = undefined;
+      TwinpxZonesDelivery.addressProperty.forEach((name) => {
+        TwinpxZonesDelivery.addressControl =
+          document.querySelector(`[name=${name}]`) ||
+          TwinpxZonesDelivery.addressControl;
       });
     }
 
-    return this.addressControl;
-  }
+    return TwinpxZonesDelivery.addressControl;
+  };
 
-  initAddressControl() {
-    this.addressControl = this.findAddressControl();
+  TwinpxZonesDelivery.initAddressControl = function () {
+    TwinpxZonesDelivery.addressControl =
+      TwinpxZonesDelivery.findAddressControl();
 
-    if (!this.addressControl || !this.addressInput) {
+    if (
+      !TwinpxZonesDelivery.addressControl ||
+      !TwinpxZonesDelivery.addressInput
+    ) {
       return;
     }
-    this.addressControl.addEventListener('blur', () => {
+    TwinpxZonesDelivery.addressControl.addEventListener('blur', () => {
       //check if zones delivery is checked
-      this.findCheckbox();
-      if (!this.checkbox || !this.checkbox.checked) {
+      TwinpxZonesDelivery.findCheckbox();
+      if (
+        !TwinpxZonesDelivery.checkbox ||
+        !TwinpxZonesDelivery.checkbox.checked
+      ) {
         return;
       }
 
       //get zone id
-      this.chosenAddress = this.addressControl.value;
+      TwinpxZonesDelivery.chosenAddress =
+        TwinpxZonesDelivery.addressControl.value;
 
-      this.getCenterMapsFromCookies();
+      TwinpxZonesDelivery.getCenterMapsFromCookies();
 
       let addressGeocoder = ymaps.geocode(
-        this.centerMaps + ', ' + this.chosenAddress,
+        TwinpxZonesDelivery.centerMaps +
+          ', ' +
+          TwinpxZonesDelivery.chosenAddress,
         {
           results: 1,
         }
@@ -189,85 +207,63 @@ class TwinpxZonesDeliveryClass {
           let geoObject = res.geoObjects.get(0);
 
           if (!geoObject) {
-            this.chosenZoneId = 0;
-            this.chosenZoneTitle = '';
-            this.sendZoneId(true);
-            this.ymapsReset();
+            TwinpxZonesDelivery.chosenZoneId = 0;
+            TwinpxZonesDelivery.noDeliveryFlag = true;
+            TwinpxZonesDelivery.chosenZoneTitle = '';
+            TwinpxZonesDelivery.sendZoneId(true);
+            TwinpxZonesDelivery.ymapsReset();
             return;
           }
 
           let coords = geoObject.geometry.getCoordinates();
-          this.chosenCoords = coords;
+          TwinpxZonesDelivery.chosenCoords = coords;
 
-          let promise = new Promise(async (res, rej) => {
-            if (!this.polygons) {
-              if (window.BX) {
-                BX.ajax
-                  .runComponentAction(
-                    'twinpx:zones.delivery',
-                    'getDeliveryZone',
-                    {
-                      mode: 'class',
-                      method: 'post', //По умолчанию, POST.
-                      data: { id: id }, //ID зоны доставки
-                    }
-                  )
-                  .then(
-                    (response) => {
-                      this.polygons = response;
-                      if (this.polygons) {
-                        res(this.polygons);
-                      }
-                    },
-                    (error) => {
-                      rej(error);
-                    }
-                  );
-              }
+          TwinpxZonesDelivery.deliveryZones =
+            TwinpxZonesDelivery.deliveryZones ||
+            ymaps.geoQuery(TwinpxZonesDelivery.polygons);
+
+          let polygon = TwinpxZonesDelivery.deliveryZones
+            .searchContaining(coords)
+            .get(0);
+
+          if (polygon) {
+            let newId = polygon.properties.get('id');
+            if (TwinpxZonesDelivery.chosenZoneId !== newId) {
+              TwinpxZonesDelivery.chosenZoneId = newId;
+              TwinpxZonesDelivery.chosenZoneTitle =
+                polygon.properties.get('title');
+              TwinpxZonesDelivery.sendZoneId(true);
             }
-          });
+          } else {
+            TwinpxZonesDelivery.chosenZoneId = 0;
+            TwinpxZonesDelivery.noDeliveryFlag = true;
+            TwinpxZonesDelivery.chosenZoneTitle = '';
+            TwinpxZonesDelivery.sendZoneId(true);
+          }
 
-          promise.then(
-            () => {
-              this.deliveryZones =
-                this.deliveryZones || ymaps.geoQuery(this.polygons);
+          //set placemark on the map
+          TwinpxZonesDelivery.deliveryPoint.geometry.setCoordinates(coords);
+          TwinpxZonesDelivery.ymapsMap.setZoom(12);
 
-              let polygon = this.deliveryZones.searchContaining(coords).get(0);
-
-              if (polygon) {
-                let newId = polygon.properties.get('id');
-                if (this.chosenZoneId !== newId) {
-                  this.chosenZoneId = newId;
-                  this.chosenZoneTitle = polygon.properties.get('title');
-                  this.sendZoneId(true);
-                }
-              } else {
-                this.chosenZoneId = 0;
-                this.chosenZoneTitle = '';
-                this.sendZoneId(true);
-              }
-
-              //set placemark on the map
-              this.deliveryPoint.geometry.setCoordinates(coords);
-              this.ymapsMap.setZoom(12);
-
-              this.highlightResult(this.deliveryPoint);
-            },
-            (error) => {
-              this.showError(error);
-            }
+          TwinpxZonesDelivery.highlightResult(
+            TwinpxZonesDelivery.deliveryPoint
           );
         })
         .catch((error) => {
           console.log(error); // вывести ошибку
         });
     });
-  }
+  };
 
-  async sendZoneId(blurAddressControlFlag) {
+  TwinpxZonesDelivery.btnDefault.addEventListener('click', (e) => {
+    e.preventDefault();
+    TwinpxZonesDelivery.sendZoneId();
+  });
+
+  TwinpxZonesDelivery.sendZoneId = async function (blurAddressControlFlag) {
     const formData = new FormData();
-    formData.append('zid', this.chosenZoneId);
-    formData.append('coords', this.chosenCoords);
+    formData.append('zid', TwinpxZonesDelivery.chosenZoneId);
+    formData.append('coords', TwinpxZonesDelivery.chosenCoords);
     let response = await fetch(
       `/bitrix/services/main/ajax.php?mode=class&c=twinpx:zones.delivery&action=setZone`,
       {
@@ -279,30 +275,31 @@ class TwinpxZonesDeliveryClass {
     let result = await response.json();
 
     if (typeof result === 'object' && result.status === 'success') {
-      this.initAddressControl();
-      if (this.addressControl && !blurAddressControlFlag) {
-        this.addressControl.value = this.chosenAddressWithCity;
+      TwinpxZonesDelivery.initAddressControl();
+      if (TwinpxZonesDelivery.addressControl && !blurAddressControlFlag) {
+        TwinpxZonesDelivery.addressControl.value =
+          TwinpxZonesDelivery.chosenAddressWithCity;
       }
-      this.hideModal();
+      TwinpxZonesDelivery.hideModal();
       window.BX.Sale.OrderAjaxComponent.sendRequest();
     } else if (typeof result === 'object' && result.status === 'error') {
-      this.chosenZoneId = 0;
-      this.chosenZoneTitle = '';
-      this.hideModal();
+      TwinpxZonesDelivery.chosenZoneId = 0;
+      TwinpxZonesDelivery.chosenZoneTitle = '';
+      TwinpxZonesDelivery.hideModal();
       window.BX.Sale.OrderAjaxComponent.sendRequest();
     }
-  }
+  };
 
-  ymapsReady() {
+  TwinpxZonesDelivery.ymapsReady = function () {
     if (window.ymaps && window.ymaps.ready) {
       ymaps.ready(() => {
-        if (!this.centerMaps) {
-          this.showError(BX.message('TWINPX_JS_NO_REGION'));
+        if (!TwinpxZonesDelivery.centerMaps) {
+          TwinpxZonesDelivery.showError(BX.message('TWINPX_JS_NO_REGION'));
           return;
         }
 
         //geo code
-        const zdGeocoder = ymaps.geocode(this.centerMaps, {
+        const zdGeocoder = ymaps.geocode(TwinpxZonesDelivery.centerMaps, {
           results: 1,
         });
 
@@ -310,8 +307,9 @@ class TwinpxZonesDeliveryClass {
           // first result, its coords and bounds
           let firstGeoObject = res.geoObjects.get(0);
           firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
-          this.regionBounds = firstGeoObject.properties.get('boundedBy');
-          this.chosenCoords = firstGeoObjectCoords;
+          TwinpxZonesDelivery.regionBounds =
+            firstGeoObject.properties.get('boundedBy');
+          TwinpxZonesDelivery.chosenCoords = firstGeoObjectCoords;
 
           let MyBalloonLayout = ymaps.templateLayoutFactory.createClass(
             `
@@ -327,15 +325,15 @@ class TwinpxZonesDeliveryClass {
                   .querySelector('#TwpxZdModal .twpx-zd-balloon-close')
                   .addEventListener('click', (e) => {
                     e.preventDefault();
-                    this.ymapsMap.balloon.close();
+                    TwinpxZonesDelivery.ymapsMap.balloon.close();
                   });
               },
             }
           );
 
           //set map
-          this.ymapsMap = new ymaps.Map(
-            this.ymap,
+          TwinpxZonesDelivery.ymapsMap = new ymaps.Map(
+            TwinpxZonesDelivery.ymap,
             {
               center: firstGeoObjectCoords,
               zoom: 9,
@@ -346,15 +344,15 @@ class TwinpxZonesDeliveryClass {
             }
           );
 
-          this.ymapsMap.events.add('click', function (e) {
-            this.highlightResult(e);
+          TwinpxZonesDelivery.ymapsMap.events.add('click', function (e) {
+            TwinpxZonesDelivery.highlightResult(e);
           });
 
-          this.deliveryPoint = new ymaps.GeoObject(
+          TwinpxZonesDelivery.deliveryPoint = new ymaps.GeoObject(
             {
               geometry: {
                 type: 'Point',
-                coordinates: this.ymapsMap.getCenter(),
+                coordinates: TwinpxZonesDelivery.ymapsMap.getCenter(),
               },
               properties: {
                 balloonContent: ``,
@@ -368,161 +366,160 @@ class TwinpxZonesDeliveryClass {
             }
           );
 
-          this.deliveryPoint.events.add('click', () => {
-            this.highlightResult(this.deliveryPoint);
+          TwinpxZonesDelivery.deliveryPoint.events.add('click', () => {
+            TwinpxZonesDelivery.highlightResult(
+              TwinpxZonesDelivery.deliveryPoint
+            );
           });
 
-          this.ymapsMap.geoObjects.add(this.deliveryPoint);
+          TwinpxZonesDelivery.ymapsMap.geoObjects.add(
+            TwinpxZonesDelivery.deliveryPoint
+          );
 
           //search placeholder
-          let searchControl = this.ymapsMap.controls.get('searchControl');
+          let searchControl =
+            TwinpxZonesDelivery.ymapsMap.controls.get('searchControl');
           searchControl.options.set({
             noPlacemark: true,
             placeholderContent: BX.message('TWINPX_JS_CONTROL_NAME'),
           });
 
           //get zones
-          let promise = new Promise(async (res, rej) => {
-            if (!this.polygons) {
-              if (window.BX) {
-                BX.ajax
-                  .runComponentAction(
-                    'twinpx:zones.delivery',
-                    'getDeliveryZone',
-                    {
-                      mode: 'class',
-                      method: 'post', //По умолчанию, POST.
-                      data: { id: id }, //ID зоны доставки
-                    }
-                  )
-                  .then(
-                    (response) => {
-                      this.polygons = response;
-                      if (this.polygons) {
-                        res(this.polygons);
-                      }
-                    },
-                    (error) => {
-                      rej(error);
-                    }
-                  );
-              }
-            }
-          });
+          if (TwinpxZonesDelivery.polygons) {
+            TwinpxZonesDelivery.deliveryZones = ymaps
+              .geoQuery(TwinpxZonesDelivery.polygons)
+              .addToMap(TwinpxZonesDelivery.ymapsMap);
 
-          promise.then(
-            () => {
-              this.deliveryZones = ymaps
-                .geoQuery(this.polygons)
-                .addToMap(this.ymapsMap);
-
-              this.deliveryZones.each((obj) => {
-                obj.options.set({
-                  fillColor: obj.properties.get('fill'),
-                  fillOpacity: obj.properties.get('fill-opacity'),
-                  strokeColor: obj.properties.get('stroke'),
-                  strokeWidth: obj.properties.get('stroke-width'),
-                  strokeOpacity: obj.properties.get('stroke-opacity'),
-                  zIndex: obj.properties.get('zIndex'),
-                });
-                this.zoneOpacity = obj.properties.get('fill-opacity');
-
-                /*obj.properties.set(
-                  'balloonContent',
-                  `Минимальная стоимость за 1 м<sup>3</sup>: ${obj.properties.get(
-                    'min-price'
-                  )}р<br>
-                  Добавочная стоимость за 1 м<sup>3</sup>: ${obj.properties.get(
-                    'added-value'
-                  )}р<br>
-                  Максимальный объём: ${obj.properties.get(
-                    'max-volume'
-                  )}м<sup>3</sup>`
-                );*/
-
-                obj.events.add('click', (e) => {
-                  e.stopPropagation();
-                  this.deliveryPoint.geometry.setCoordinates(e.get('coords'));
-                  this.highlightResult(this.deliveryPoint);
-                });
+            TwinpxZonesDelivery.deliveryZones.each((obj) => {
+              obj.options.set({
+                fillColor: obj.properties.get('fill'),
+                fillOpacity: obj.properties.get('fill-opacity'),
+                strokeColor: obj.properties.get('stroke'),
+                strokeWidth: obj.properties.get('stroke-width'),
+                strokeOpacity: obj.properties.get('stroke-opacity'),
+                zIndex: obj.properties.get('zIndex'),
               });
+              TwinpxZonesDelivery.zoneOpacity =
+                obj.properties.get('fill-opacity');
 
-              //map bounds
-              /*this.polygonsBounds =
-                  this.deliveryZones.getBounds();
-                this.ymapsMap.setBounds(
-                  this.polygonsBounds,
-                  { checkZoomRange: true }
-                );*/
-              //bounds for the region
-              /*this.ymapsMap.setBounds(
-                  this.regionBounds, //region
-                  {
-                    checkZoomRange: true,
-                  }
-                );*/
+              /*obj.properties.set(
+                'balloonContent',
+                `Минимальная стоимость за 1 м<sup>3</sup>: ${obj.properties.get(
+                  'min-price'
+                )}р<br>
+                Добавочная стоимость за 1 м<sup>3</sup>: ${obj.properties.get(
+                  'added-value'
+                )}р<br>
+                Максимальный объём: ${obj.properties.get(
+                  'max-volume'
+                )}м<sup>3</sup>`
+              );*/
 
-              // Проверим попадание результата поиска в одну из зон доставки.
-              searchControl.events.add('resultshow', function (e) {
-                this.highlightResult(
-                  searchControl.getResultsArray()[e.get('index')]
+              obj.events.add('click', (e) => {
+                e.stopPropagation();
+                TwinpxZonesDelivery.deliveryPoint.geometry.setCoordinates(
+                  e.get('coords')
+                );
+                TwinpxZonesDelivery.highlightResult(
+                  TwinpxZonesDelivery.deliveryPoint
                 );
               });
+            });
 
-              // Проверим попадание метки геолокации в одну из зон доставки.
-              this.ymapsMap.controls
-                .get('geolocationControl')
-                .events.add('locationchange', function (e) {
-                  this.highlightResult(e.get('geoObjects').get(0));
-                });
+            //map bounds
+            /*TwinpxZonesDelivery.polygonsBounds =
+                TwinpxZonesDelivery.deliveryZones.getBounds();
+              TwinpxZonesDelivery.ymapsMap.setBounds(
+                TwinpxZonesDelivery.polygonsBounds,
+                { checkZoomRange: true }
+              );*/
+            //bounds for the region
+            /*TwinpxZonesDelivery.ymapsMap.setBounds(
+                TwinpxZonesDelivery.regionBounds, //region
+                {
+                  checkZoomRange: true,
+                }
+              );*/
 
-              this.ymapsMap.events.add('click', (e) => {
-                e.stopPropagation();
-                this.deliveryPoint.balloon.close();
+            // Проверим попадание результата поиска в одну из зон доставки.
+            searchControl.events.add('resultshow', function (e) {
+              TwinpxZonesDelivery.highlightResult(
+                searchControl.getResultsArray()[e.get('index')]
+              );
+            });
+
+            // Проверим попадание метки геолокации в одну из зон доставки.
+            TwinpxZonesDelivery.ymapsMap.controls
+              .get('geolocationControl')
+              .events.add('locationchange', function (e) {
+                TwinpxZonesDelivery.highlightResult(e.get('geoObjects').get(0));
               });
 
-              // При перемещении метки сбрасываем подпись, содержимое балуна и перекрашиваем метку.
-              this.deliveryPoint.events.add('dragstart', function () {
-                this.deliveryPoint.properties.set({
+            TwinpxZonesDelivery.ymapsMap.events.add('click', (e) => {
+              e.stopPropagation();
+              TwinpxZonesDelivery.deliveryPoint.balloon.close();
+            });
+
+            // При перемещении метки сбрасываем подпись, содержимое балуна и перекрашиваем метку.
+            TwinpxZonesDelivery.deliveryPoint.events.add(
+              'dragstart',
+              function () {
+                TwinpxZonesDelivery.deliveryPoint.properties.set({
                   balloonContent: '',
                 });
-                this.deliveryPoint.options.set('iconColor', 'gray');
-              });
+                TwinpxZonesDelivery.deliveryPoint.options.set(
+                  'iconColor',
+                  'gray'
+                );
+              }
+            );
 
-              // По окончании перемещения метки вызываем функцию выделения зоны доставки.
-              this.deliveryPoint.events.add('dragend', function () {
-                this.highlightResult(this.deliveryPoint);
-              });
+            // По окончании перемещения метки вызываем функцию выделения зоны доставки.
+            TwinpxZonesDelivery.deliveryPoint.events.add(
+              'dragend',
+              function () {
+                TwinpxZonesDelivery.highlightResult(
+                  TwinpxZonesDelivery.deliveryPoint
+                );
+              }
+            );
+          } else {
+            TwinpxZonesDelivery.showError('');
+          }
 
-              this.highlightResult(this.deliveryPoint);
-            },
-            (error) => {
-              this.showError(error);
-              this.highlightResult(this.deliveryPoint);
-            }
+          TwinpxZonesDelivery.highlightResult(
+            TwinpxZonesDelivery.deliveryPoint
           );
         });
       });
     }
-  }
+  };
 
-  async highlightResult(obj) {
+  TwinpxZonesDelivery.highlightResult = async function (obj) {
     // Сохраняем координаты переданного объекта.
     var coords = obj.geometry
         ? obj.geometry.getCoordinates()
-        : obj.get('coords'), //в obj может быть событие click из this.ymapsMap.events
+        : obj.get('coords'), //в obj может быть событие click из TwinpxZonesDelivery.ymapsMap.events
       // Находим полигон, в который входят переданные координаты.
-      polygon = this.deliveryZones.searchContaining(coords).get(0);
+      polygon = TwinpxZonesDelivery.deliveryZones
+        .searchContaining(coords)
+        .get(0);
 
-    this.chosenCoords = coords;
+    TwinpxZonesDelivery.chosenCoords = coords;
 
     if (polygon) {
       // Уменьшаем прозрачность всех полигонов, кроме того, в который входят переданные координаты.
-      this.deliveryZones.setOptions('fillOpacity', this.zoneOpacity);
-      polygon.options.set('fillOpacity', 1 * this.zoneOpacity + 0.1);
+      TwinpxZonesDelivery.deliveryZones.setOptions(
+        'fillOpacity',
+        TwinpxZonesDelivery.zoneOpacity
+      );
+      polygon.options.set(
+        'fillOpacity',
+        1 * TwinpxZonesDelivery.zoneOpacity + 0.1
+      );
       // Перемещаем метку с подписью в переданные координаты и перекрашиваем её в цвет полигона.
-      this.deliveryPoint.geometry.setCoordinates(coords);
-      this.deliveryPoint.options.set(
+      TwinpxZonesDelivery.deliveryPoint.geometry.setCoordinates(coords);
+      TwinpxZonesDelivery.deliveryPoint.options.set(
         'iconColor',
         polygon.properties.get('fill')
       );
@@ -531,35 +528,35 @@ class TwinpxZonesDeliveryClass {
       if (typeof obj.getThoroughfare === 'function') {
         //if search
         //remember zone id
-        this.chosenZoneId = polygon.properties.get('id');
-        this.chosenZoneTitle = polygon.properties.get('title');
-        this.chosenAddress = getAddress(obj);
+        TwinpxZonesDelivery.chosenZoneId = polygon.properties.get('id');
+        TwinpxZonesDelivery.chosenZoneTitle = polygon.properties.get('title');
+        TwinpxZonesDelivery.chosenAddress = getAddress(obj);
 
         //balloon
-        this.deliveryPoint.properties.set({
+        TwinpxZonesDelivery.deliveryPoint.properties.set({
           balloonContent: `
           <div style="font: bold 18px 'Open Sans', Arial, sans-serif; margin-bottom: 17px;">${polygon.properties.get(
             'title'
           )}</div>
           <div style="font: normal 14px 'Open Sans', Arial, sans-serif; margin-bottom: 2px;">${
-            this.chosenAddress
+            TwinpxZonesDelivery.chosenAddress
           }</div>
           <div style="height: 30px; display: flex; align-items: center;">
             <div style="width: 16px; height: 16px; animation: circle 1.3s infinite linear; border: 2px solid #d0d0d0; border-radius: 50%; border-right-color: transparent;"></div>
           </div>
           `,
         });
-        this.deliveryPoint.balloon.open();
+        TwinpxZonesDelivery.deliveryPoint.balloon.open();
 
         //load the price
-        const price = await this.getPrice();
-        this.deliveryPoint.properties.set({
+        const price = await TwinpxZonesDelivery.getPrice();
+        TwinpxZonesDelivery.deliveryPoint.properties.set({
           balloonContent: `
           <div style="font: bold 18px 'Open Sans', Arial, sans-serif; margin-bottom: 17px;">${polygon.properties.get(
             'title'
           )}</div>
           <div style="font: normal 14px 'Open Sans', Arial, sans-serif; margin-bottom: 2px;">${
-            this.chosenAddress
+            TwinpxZonesDelivery.chosenAddress
           }</div>
           <div style="height: 30px; font: bold 14px 'Open Sans', Arial, sans-serif; display: flex; align-items: center;">${price}</div>
         `,
@@ -569,38 +566,38 @@ class TwinpxZonesDeliveryClass {
         // закомментируйте код ниже.
         ymaps.geocode(coords, { results: 1 }).then(async function (res) {
           //remember zone id
-          this.chosenZoneId = polygon.properties.get('id');
-          this.chosenZoneTitle = polygon.properties.get('title');
+          TwinpxZonesDelivery.chosenZoneId = polygon.properties.get('id');
+          TwinpxZonesDelivery.chosenZoneTitle = polygon.properties.get('title');
           //balloon
           var obj = res.geoObjects.get(0);
 
-          this.chosenAddress = getAddress(obj);
+          TwinpxZonesDelivery.chosenAddress = getAddress(obj);
 
           //balloon
-          this.deliveryPoint.properties.set({
+          TwinpxZonesDelivery.deliveryPoint.properties.set({
             balloonContent: `
             <div style="font: bold 18px 'Open Sans', Arial, sans-serif; margin-bottom: 17px;">${polygon.properties.get(
               'title'
             )}</div>
             <div style="font: normal 14px 'Open Sans', Arial, sans-serif; margin-bottom: 2px;">${
-              this.chosenAddress
+              TwinpxZonesDelivery.chosenAddress
             }</div>
             <div style="height: 30px; display: flex; align-items: center;">
               <div style="width: 16px; height: 16px; animation: circle 1.3s infinite linear; border: 2px solid #d0d0d0; border-radius: 50%; border-right-color: transparent;"></div>
             </div>
             `,
           });
-          this.deliveryPoint.balloon.open();
+          TwinpxZonesDelivery.deliveryPoint.balloon.open();
 
           //load the price
-          const price = await this.getPrice();
-          this.deliveryPoint.properties.set({
+          const price = await TwinpxZonesDelivery.getPrice();
+          TwinpxZonesDelivery.deliveryPoint.properties.set({
             balloonContent: `
           <div style="font: bold 18px 'Open Sans', Arial, sans-serif; margin-bottom: 17px;">${polygon.properties.get(
             'title'
           )}</div>
           <div style="font: normal 14px 'Open Sans', Arial, sans-serif; margin-bottom: 2px;">${
-            this.chosenAddress
+            TwinpxZonesDelivery.chosenAddress
           }</div>
           <div style="height: 30px; font: bold 14px 'Open Sans', Arial, sans-serif; display: flex; align-items: center;">${price}</div>
         `,
@@ -609,27 +606,34 @@ class TwinpxZonesDeliveryClass {
       }
 
       //center the map
-      this.ymapsMap.panTo(coords);
+      TwinpxZonesDelivery.ymapsMap.panTo(coords);
       //Enable button
-      this.btnDefault.classList.remove('twpx-zd-modal-btn--disabled');
+      TwinpxZonesDelivery.btnDefault.classList.remove(
+        'twpx-zd-modal-btn--disabled'
+      );
     } else {
-      this.chosenZoneId = 0;
-      this.chosenZoneTitle = '';
+      TwinpxZonesDelivery.chosenZoneId = 0;
+      TwinpxZonesDelivery.chosenZoneTitle = '';
       // Если переданные координаты не попадают в полигон, то задаём стандартную прозрачность полигонов.
-      this.deliveryZones.setOptions('fillOpacity', this.zoneOpacity);
+      TwinpxZonesDelivery.deliveryZones.setOptions(
+        'fillOpacity',
+        TwinpxZonesDelivery.zoneOpacity
+      );
       // Перемещаем метку по переданным координатам.
-      this.deliveryPoint.geometry.setCoordinates(coords);
+      TwinpxZonesDelivery.deliveryPoint.geometry.setCoordinates(coords);
       // Задаём контент балуна и метки.
-      this.deliveryPoint.properties.set({
+      TwinpxZonesDelivery.deliveryPoint.properties.set({
         balloonContent: BX.message('TWINPX_EMPTY_ZONE'),
       });
       setTimeout(() => {
-        this.deliveryPoint.balloon.open();
+        TwinpxZonesDelivery.deliveryPoint.balloon.open();
       }, 0);
       // Перекрашиваем метку в чёрный цвет.
-      this.deliveryPoint.options.set('iconColor', 'black');
+      TwinpxZonesDelivery.deliveryPoint.options.set('iconColor', 'black');
       //Disable button
-      this.btnDefault.classList.add('twpx-zd-modal-btn--disabled');
+      TwinpxZonesDelivery.btnDefault.classList.add(
+        'twpx-zd-modal-btn--disabled'
+      );
     }
 
     function getAddress(obj) {
@@ -639,62 +643,68 @@ class TwinpxZonesDeliveryClass {
         obj.getPremise(),
       ].join(' ');*/
       let address = obj.properties._data.name;
-      this.chosenAddressWithCity = obj.getAddressLine();
+      TwinpxZonesDelivery.chosenAddressWithCity = obj.getAddressLine();
       if (address.trim() === '') {
         address = obj.getAddressLine();
       }
       return address;
     }
-  }
+  };
 
-  ymapsReset() {
+  TwinpxZonesDelivery.ymapsReset = function () {
     //set polygon bounds
-    if (this.polygonsBounds) {
-      this.ymapsMap.setBounds(this.polygonsBounds, { checkZoomRange: true });
+    if (TwinpxZonesDelivery.polygonsBounds) {
+      TwinpxZonesDelivery.ymapsMap.setBounds(
+        TwinpxZonesDelivery.polygonsBounds,
+        { checkZoomRange: true }
+      );
     }
     //get map center
-    let centerCoords = this.ymapsMap.getCenter();
-    this.chosenCoords = centerCoords;
+    let centerCoords = TwinpxZonesDelivery.ymapsMap.getCenter();
+    TwinpxZonesDelivery.chosenCoords = centerCoords;
     //placemark in the center
-    this.deliveryPoint.geometry.setCoordinates(centerCoords);
+    TwinpxZonesDelivery.deliveryPoint.geometry.setCoordinates(centerCoords);
     //hide balloon
-    this.deliveryPoint.balloon.close();
-    this.deliveryPoint.options.set('iconColor', 'gray');
-  }
+    TwinpxZonesDelivery.deliveryPoint.balloon.close();
+    TwinpxZonesDelivery.deliveryPoint.options.set('iconColor', 'gray');
+  };
 
-  findCheckbox() {
+  TwinpxZonesDelivery.findCheckbox = function () {
     document
-      .querySelectorAll(`[name=${this.addressInput.name}]`)
+      .querySelectorAll(`[name=${TwinpxZonesDelivery.addressInput.name}]`)
       .forEach((checkbox) => {
-        if (checkbox.value === this.addressInput.value) {
-          this.checkbox = checkbox;
+        if (checkbox.value === TwinpxZonesDelivery.addressInput.value) {
+          TwinpxZonesDelivery.checkbox = checkbox;
         }
       });
-  }
+  };
 
-  onBeforeSendRequest() {
+  TwinpxZonesDelivery.onBeforeSendRequest = function () {
     if (window.BX && BX.Event && BX.Event.EventEmitter) {
       BX.Event.EventEmitter.subscribe(
         'BX.Sale.OrderAjaxComponent:onBeforeSendRequest',
         (event) => {
-          this.findCheckbox();
+          TwinpxZonesDelivery.findCheckbox();
 
           //if there is no zones delivery for some location
-          if (!this.checkbox || !this.checkbox.parentNode) {
+          if (
+            !TwinpxZonesDelivery.checkbox ||
+            !TwinpxZonesDelivery.checkbox.parentNode
+          ) {
             return;
           }
 
           let emptySpan = document.createElement('span');
           emptySpan.id = `ZONES_DELIVERY_SPAN`;
-          this.checkbox.parentNode.appendChild(emptySpan);
+          TwinpxZonesDelivery.checkbox.parentNode.appendChild(emptySpan);
           let counter = 0;
           //wait for the reload
           let intervalId = setInterval(() => {
             if (!document.getElementById(`ZONES_DELIVERY_SPAN`)) {
               clearInterval(intervalId);
-              this.initAddressControl();
-              this.getChosenZoneFromCookies();
-              this.showZoneTitle();
+              TwinpxZonesDelivery.initAddressControl();
+              TwinpxZonesDelivery.getChosenZoneFromCookies();
+              TwinpxZonesDelivery.showZoneTitle();
             } else if (++counter >= 100) {
               clearInterval(intervalId);
             }
@@ -702,17 +712,25 @@ class TwinpxZonesDeliveryClass {
         }
       );
     }
-  }
+  };
 
-  showZoneTitle() {
-    if (!document.querySelector('#twpx-zd-showmodal') || !this.chosenZoneTitle)
+  TwinpxZonesDelivery.showZoneTitle = function () {
+    if (!document.querySelector('#twpx-zd-showmodal')) return;
+
+    if (
+      !TwinpxZonesDelivery.chosenZoneTitle &&
+      !TwinpxZonesDelivery.noDeliveryFlag
+    ) {
       return;
+    }
 
     const div = document.createElement('div');
     div.id = 'twpx-zd-showmodal-zonename';
     div.style.display = 'block';
     div.style.paddingTop = '15px';
-    div.textContent = this.chosenZoneTitle;
+    div.textContent = TwinpxZonesDelivery.noDeliveryFlag
+      ? BX.message('TWINPX_JS_NO_DELIVERY')
+      : TwinpxZonesDelivery.chosenZoneTitle;
 
     const title = document.createElement('div');
     title.style.color = '#8d8d8d';
@@ -720,12 +738,15 @@ class TwinpxZonesDeliveryClass {
     title.style.lineHeight = '1.5';
     title.textContent = BX.message('TWINPX_JS_ZONE_TITLE');
 
-    div.prepend(title);
+    if (!TwinpxZonesDelivery.noDeliveryFlag) {
+      div.prepend(title);
+    }
 
+    TwinpxZonesDelivery.noDeliveryFlag = false;
     document.querySelector('#twpx-zd-showmodal').after(div);
-  }
+  };
 
-  async getPrice() {
+  TwinpxZonesDelivery.getPrice = async function () {
     let result;
 
     if (window.BX && BX.ajax) {
@@ -734,7 +755,7 @@ class TwinpxZonesDeliveryClass {
           .runComponentAction('twinpx:zones.delivery', 'getZonePrice', {
             mode: 'class', //это означает, что мы хотим вызывать действие из class.php или ajax.php
             data: {
-              zid: this.chosenZoneId,
+              zid: TwinpxZonesDelivery.chosenZoneId,
             }, //data {Object|FormData} данные будут автоматически замаплены на параметры метода
           })
           .then(
@@ -758,37 +779,15 @@ class TwinpxZonesDeliveryClass {
     }
 
     return result;
-  }
-}
+  };
 
-window.addEventListener('load', () => {
-  if (
-    window.TwinpxZonesDelivery &&
-    typeof window.TwinpxZonesDelivery === 'object' &&
-    window.TwinpxZonesDelivery.items &&
-    typeof window.TwinpxZonesDelivery.items === 'object' &&
-    window.TwinpxZonesDelivery.items.forEach
-  ) {
-    window.TwinpxZonesDelivery.showModal = () => {
-      //узнать активный чекбокс
-      window.TwinpxZonesDelivery.items.forEach((item) => {
-        document
-          .querySelectorAll(`[name=${item.addressInput.name}]`)
-          .forEach((checkbox) => {
-            if (
-              checkbox.value === item.addressInput.value &&
-              checkbox.checked
-            ) {
-              if (item.inst) {
-                //взять тот экземпляр класса, который относится к этому чекбоксу и вызвать окно
-                item.inst.showModal();
-              }
-            }
-          });
-      });
-    };
-    window.TwinpxZonesDelivery.items.forEach((zdObj) => {
-      zdObj.inst = new TwinpxZonesDeliveryClass(zdObj);
-    });
-  }
+  TwinpxZonesDelivery.init = function () {
+    TwinpxZonesDelivery.initAddressControl();
+    TwinpxZonesDelivery.ymapsReady();
+    TwinpxZonesDelivery.onBeforeSendRequest();
+    TwinpxZonesDelivery.showZoneTitle();
+  };
+
+  //init
+  TwinpxZonesDelivery.init();
 });
