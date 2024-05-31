@@ -212,7 +212,7 @@ class TwinpxZonesDeliveryClass {
                     {
                       mode: 'class',
                       method: 'post', //По умолчанию, POST.
-                      data: { id: this.id }, //ID зоны доставки
+                      data: { id: this.id }, //ID доставки
                     }
                   )
                   .then(
@@ -313,7 +313,7 @@ class TwinpxZonesDeliveryClass {
         zdGeocoder.then(async (res) => {
           // first result, its coords and bounds
           let firstGeoObject = res.geoObjects.get(0);
-          firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
+          firstGeoObjectCoords = firstGeoObject.geometry._coordinates;
           this.regionBounds = firstGeoObject.properties.get('boundedBy');
           this.chosenCoords = firstGeoObjectCoords;
 
@@ -396,7 +396,7 @@ class TwinpxZonesDeliveryClass {
                     {
                       mode: 'class',
                       method: 'post', //По умолчанию, POST.
-                      data: { id: this.id }, //ID зоны доставки
+                      data: { id: this.id }, //ID доставки
                     }
                   )
                   .then(
@@ -788,7 +788,7 @@ window.addEventListener('load', () => {
           .querySelectorAll(`[name=${item.addressInput.name}]`)
           .forEach((checkbox) => {
             if (
-              checkbox.value === item.addressInput.value &&
+              String(checkbox.value) === String(item.addressInput.value) &&
               checkbox.checked
             ) {
               if (item.inst) {
