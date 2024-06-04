@@ -582,31 +582,27 @@
 
     <script>
       window.TwinpxZonesDelivery = window.TwinpxZonesDelivery || {
+        centerMaps: '',
+        ymapsUrl:
+          '//api-maps.yandex.ru/2.1.50/?apikey=6934dd6e-0a33-4cde-bfcf-7d6c30eeddac&load=package.full&lang=ru-RU',
+        addressProperty: ['ADDRESS', 'ADDRESS2'],
         items: [
           {
             id: 1,
-            ymapsUrl:
-              '//api-maps.yandex.ru/2.1.50/?apikey=6934dd6e-0a33-4cde-bfcf-7d6c30eeddac&load=package.full&lang=ru-RU',
-            addressProperty: ['ADDRESS', 'ADDRESS2'],
             addressInput: {
               name: 'DELIVERY_ID',
               value: '7',
             },
-            centerMaps: 'Москва',
             zones: { 123: '1. МКАД', 456: '2. ЦАО' },
             chosenZoneTitle: '3. МКАД',
             chosenZoneId: 345,
           },
           {
             id: 2,
-            ymapsUrl:
-              '//api-maps.yandex.ru/2.1.50/?apikey=6934dd6e-0a33-4cde-bfcf-7d6c30eeddac&load=package.full&lang=ru-RU',
-            addressProperty: ['ADDRESS', 'ADDRESS2'],
             addressInput: {
               name: 'DELIVERY_ID',
               value: '8',
             },
-            centerMaps: 'Москва',
             zones: { 123: '1. МКАД', 456: '2. ЦАО' },
             chosenZoneTitle: '3. МКАД',
             chosenZoneId: 345,

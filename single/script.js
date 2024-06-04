@@ -306,7 +306,7 @@ window.addEventListener('load', () => {
         zdGeocoder.then(async (res) => {
           // first result, its coords and bounds
           let firstGeoObject = res.geoObjects.get(0);
-          firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
+          let firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
           TwinpxZonesDelivery.regionBounds =
             firstGeoObject.properties.get('boundedBy');
           TwinpxZonesDelivery.chosenCoords = firstGeoObjectCoords;
