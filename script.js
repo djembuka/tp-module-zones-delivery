@@ -713,6 +713,7 @@ class TwinpxZonesDeliveryClass {
         // при переключении устанавливаем активную доставку
         window.TwinpxZonesDelivery.activeItem = this.zdObj;
         window.TwinpxZonesDelivery.address.initAddressControl();
+        window.TwinpxZonesDelivery.ymap.getCenterMapsFromCookies();
         this.getChosenZoneFromCookies();
         this.showZoneTitle();
         window.TwinpxZonesDelivery.ymap.getZones();
@@ -721,14 +722,22 @@ class TwinpxZonesDeliveryClass {
   }
 
   getChosenZoneFromCookies() {
+    document.cookie = 'ZONE_ID_17=2';
+    document.cookie = 'ZONE_ID_18=9';
     //id
-    window.TwinpxZonesDelivery.activeItem.inst.chosenZoneId =
-      decodeURI(
-        document.cookie.replace(
-          /(?:(?:^|.*;\s*)ZONE_ID\s*\=\s*([^;]*).*$)|^.*$/,
-          '$1'
-        )
-      ) || 0;
+    let str = `ZONE_ID_${window.TwinpxZonesDelivery.activeItem.id}`;
+    let id = decodeURI(
+      document.cookie.substring(
+        document.cookie.indexOf(str) + str.length + 1,
+        document.cookie.indexOf(';', document.cookie.indexOf(str))
+      )
+    );
+    window.TwinpxZonesDelivery.activeItem.inst.chosenZoneId = id || 0;
+    // let regexp = new RegExp(
+    //   `(?:(?:^|.*;/\s*)ZONE_ID_${window.TwinpxZonesDelivery.activeItem.id}/\s*/\=/\s*([^;]*).*$)|^.*$`
+    // );
+    // window.TwinpxZonesDelivery.activeItem.inst.chosenZoneId =
+    //   decodeURI(document.cookie.replace(regexp, '$1')) || 0;
     //title
     window.TwinpxZonesDelivery.activeItem.inst.chosenZoneTitle =
       window.TwinpxZonesDelivery.activeItem.inst.zones[
