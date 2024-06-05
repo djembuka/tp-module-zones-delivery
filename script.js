@@ -284,6 +284,94 @@ class TwinpxZonesDeliveryYmapClass {
       ) || window.TwinpxZonesDelivery.centerMaps;
   }
 
+  initYmapsMap(callback) {
+    //geo code
+    const zdGeocoder = ymaps.geocode(window.TwinpxZonesDelivery.centerMaps, {
+      results: 1,
+    });
+
+    zdGeocoder.then(async (res) => {
+      // first result, its coords and bounds
+      let firstGeoObject = res.geoObjects.get(0);
+      let firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
+      this.regionBounds = firstGeoObject.properties.get('boundedBy');
+      this.chosenCoords = firstGeoObjectCoords;
+      let t = this;
+
+      let MyBalloonLayout = ymaps.templateLayoutFactory.createClass(
+        `
+        <div class="twpx-zd-balloon">
+          <div class="twpx-zd-balloon-close"></div>
+          $[properties.balloonContent]
+        </div>
+      `,
+        {
+          build() {
+            MyBalloonLayout.superclass.build.call(this);
+            document
+              .querySelector('#TwpxZdModal .twpx-zd-balloon-close')
+              .addEventListener('click', (e) => {
+                e.preventDefault();
+                t.ymapsMap.balloon.close();
+              });
+          },
+        }
+      );
+
+      //set map
+      this.ymapsMap = new ymaps.Map(
+        this.ymap,
+        {
+          center: firstGeoObjectCoords,
+          zoom: 9,
+          controls: ['geolocationControl', 'searchControl', 'zoomControl'],
+        },
+        {
+          suppressMapOpenBlock: true,
+        }
+      );
+
+      this.ymapsMap.events.add('click', (e) => {
+        this.highlightResult(e);
+      });
+
+      this.deliveryPoint = new ymaps.GeoObject(
+        {
+          geometry: {
+            type: 'Point',
+            coordinates: this.ymapsMap.getCenter(),
+          },
+          properties: {
+            balloonContent: ``,
+          },
+        },
+        {
+          preset: 'islands#violetCircleDotIcon',
+          draggable: true,
+          balloonLayout: MyBalloonLayout,
+          hideIconOnBalloonOpen: false,
+        }
+      );
+
+      this.deliveryPoint.events.add('click', () => {
+        this.highlightResult(this.deliveryPoint);
+      });
+
+      this.ymapsMap.geoObjects.add(this.deliveryPoint);
+
+      //search placeholder
+      this.searchControl = this.ymapsMap.controls.get('searchControl');
+      this.searchControl.options.set({
+        noPlacemark: true,
+        placeholderContent: BX.message('TWINPX_JS_CONTROL_NAME'),
+      });
+
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
   ymapsReady() {
     if (window.ymaps && window.ymaps.ready) {
       ymaps.ready(() => {
@@ -294,90 +382,7 @@ class TwinpxZonesDeliveryYmapClass {
           return;
         }
 
-        //geo code
-        const zdGeocoder = ymaps.geocode(
-          window.TwinpxZonesDelivery.centerMaps,
-          {
-            results: 1,
-          }
-        );
-
-        zdGeocoder.then(async (res) => {
-          // first result, its coords and bounds
-          let firstGeoObject = res.geoObjects.get(0);
-          let firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
-          this.regionBounds = firstGeoObject.properties.get('boundedBy');
-          this.chosenCoords = firstGeoObjectCoords;
-          let t = this;
-
-          let MyBalloonLayout = ymaps.templateLayoutFactory.createClass(
-            `
-            <div class="twpx-zd-balloon">
-              <div class="twpx-zd-balloon-close"></div>
-              $[properties.balloonContent]
-            </div>
-          `,
-            {
-              build() {
-                MyBalloonLayout.superclass.build.call(this);
-                document
-                  .querySelector('#TwpxZdModal .twpx-zd-balloon-close')
-                  .addEventListener('click', (e) => {
-                    e.preventDefault();
-                    t.ymapsMap.balloon.close();
-                  });
-              },
-            }
-          );
-
-          //set map
-          this.ymapsMap = new ymaps.Map(
-            this.ymap,
-            {
-              center: firstGeoObjectCoords,
-              zoom: 9,
-              controls: ['geolocationControl', 'searchControl', 'zoomControl'],
-            },
-            {
-              suppressMapOpenBlock: true,
-            }
-          );
-
-          this.ymapsMap.events.add('click', (e) => {
-            this.highlightResult(e);
-          });
-
-          this.deliveryPoint = new ymaps.GeoObject(
-            {
-              geometry: {
-                type: 'Point',
-                coordinates: this.ymapsMap.getCenter(),
-              },
-              properties: {
-                balloonContent: ``,
-              },
-            },
-            {
-              preset: 'islands#violetCircleDotIcon',
-              draggable: true,
-              balloonLayout: MyBalloonLayout,
-              hideIconOnBalloonOpen: false,
-            }
-          );
-
-          this.deliveryPoint.events.add('click', () => {
-            this.highlightResult(this.deliveryPoint);
-          });
-
-          this.ymapsMap.geoObjects.add(this.deliveryPoint);
-
-          //search placeholder
-          this.searchControl = this.ymapsMap.controls.get('searchControl');
-          this.searchControl.options.set({
-            noPlacemark: true,
-            placeholderContent: BX.message('TWINPX_JS_CONTROL_NAME'),
-          });
-        });
+        this.initYmapsMap();
       });
     }
   }
@@ -762,13 +767,22 @@ class TwinpxZonesDeliveryClass {
           let intervalId = setInterval(() => {
             if (!document.getElementById(`ZONES_DELIVERY_SPAN`)) {
               clearInterval(intervalId);
-              window.TwinpxZonesDelivery.activeItem = this.zdObj;
-              window.TwinpxZonesDelivery.address.initAddressControl();
-              window.TwinpxZonesDelivery.ymap.getCenterMapsFromCookies();
-              this.getChosenZoneFromCookies();
-              this.showZoneTitle();
-              window.TwinpxZonesDelivery.ymap.clearPoligons();
-              window.TwinpxZonesDelivery.ymap.getZones();
+              if (!window.TwinpxZonesDelivery.ymap.ymapsMap) {
+                window.TwinpxZonesDelivery.ymap.initYmapsMap(on);
+              }
+
+              const t = this;
+              on();
+
+              function on() {
+                window.TwinpxZonesDelivery.activeItem = t.zdObj;
+                window.TwinpxZonesDelivery.address.initAddressControl();
+                window.TwinpxZonesDelivery.ymap.getCenterMapsFromCookies();
+                t.getChosenZoneFromCookies();
+                t.showZoneTitle();
+                window.TwinpxZonesDelivery.ymap.clearPoligons();
+                window.TwinpxZonesDelivery.ymap.getZones();
+              }
             } else if (++counter >= 100) {
               clearInterval(intervalId);
             }
