@@ -650,7 +650,8 @@ class TwinpxZonesDeliveryYmapClass {
         obj.getPremise(),
       ].join(' ');*/
       let address = obj.properties._data.name;
-      t.chosenAddressWithCity = obj.getAddressLine();
+      window.TwinpxZonesDelivery.activeItem.inst.chosenAddressWithCity =
+        obj.getAddressLine();
       if (address.trim() === '') {
         address = obj.getAddressLine();
       }
@@ -707,7 +708,7 @@ class TwinpxZonesDeliveryClass {
     const formData = new FormData();
     formData.append('did', this.id);
     formData.append('zid', this.chosenZoneId);
-    formData.append('coords', this.chosenCoords);
+    formData.append('coords', window.TwinpxZonesDelivery.ymap.chosenCoords);
     let response = await fetch(
       `/bitrix/services/main/ajax.php?mode=class&c=twinpx:zones.delivery&action=setZone`,
       {
@@ -720,8 +721,12 @@ class TwinpxZonesDeliveryClass {
 
     if (typeof result === 'object' && result.status === 'success') {
       window.TwinpxZonesDelivery.address.initAddressControl();
-      if (this.addressControl && !blurAddressControlFlag) {
-        this.addressControl.value = this.chosenAddressWithCity;
+      if (
+        window.TwinpxZonesDelivery.address.addressControl &&
+        !blurAddressControlFlag
+      ) {
+        window.TwinpxZonesDelivery.address.addressControl.value =
+          this.chosenAddressWithCity;
       }
       window.TwinpxZonesDelivery.modal.hideModal();
       window.BX.Sale.OrderAjaxComponent.sendRequest();
@@ -775,13 +780,24 @@ class TwinpxZonesDeliveryClass {
               on();
 
               function on() {
-                window.TwinpxZonesDelivery.activeItem = t.zdObj;
-                window.TwinpxZonesDelivery.address.initAddressControl();
-                window.TwinpxZonesDelivery.ymap.getCenterMapsFromCookies();
-                t.getChosenZoneFromCookies();
-                t.showZoneTitle();
-                window.TwinpxZonesDelivery.ymap.clearPoligons();
-                window.TwinpxZonesDelivery.ymap.getZones();
+                let id;
+                if (document.getElementById('twpx-zd-showmodal')) {
+                  id = document
+                    .getElementById('twpx-zd-showmodal')
+                    .getAttribute('data-id');
+                  window.TwinpxZonesDelivery.activeItem =
+                    window.TwinpxZonesDelivery.items.find(
+                      (item) => String(item.id) === String(id)
+                    );
+                }
+                if (id && String(t.id) === String(id)) {
+                  window.TwinpxZonesDelivery.address.initAddressControl();
+                  window.TwinpxZonesDelivery.ymap.getCenterMapsFromCookies();
+                  t.getChosenZoneFromCookies();
+                  t.showZoneTitle();
+                  window.TwinpxZonesDelivery.ymap.clearPoligons();
+                  window.TwinpxZonesDelivery.ymap.getZones();
+                }
               }
             } else if (++counter >= 100) {
               clearInterval(intervalId);
@@ -811,11 +827,12 @@ class TwinpxZonesDeliveryClass {
   showZoneTitle() {
     if (!document.querySelector('#twpx-zd-showmodal')) return;
 
-    if (
-      (!this.chosenZoneTitle && !this.noDeliveryFlag) ||
-      document.getElementById('twpx-zd-showmodal-zonename')
-    ) {
+    if (!this.chosenZoneTitle && !this.noDeliveryFlag) {
       return;
+    }
+
+    if (document.getElementById('twpx-zd-showmodal-zonename')) {
+      document.getElementById('twpx-zd-showmodal-zonename').remove();
     }
 
     const div = document.createElement('div');
