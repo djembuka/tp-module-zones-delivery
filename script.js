@@ -58,7 +58,16 @@ class TwinpxZonesDeliveryModalClass {
     this.modalContent = this.modal.querySelector('.twpx-zd-modal-content');
     this.modalError = this.modal.querySelector('.twpx-zd-modal-error');
 
+    this.init();
+  }
+
+  init() {
+    this.appendToBody();
     this.addEvents();
+  }
+
+  appendToBody() {
+    document.querySelector('body').append(this.modal);
   }
 
   addEvents() {
