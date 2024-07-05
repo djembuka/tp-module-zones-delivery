@@ -902,7 +902,7 @@ class TwinpxZonesDeliveryClass {
   }
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
   if (
     typeof window.TwinpxZonesDelivery === 'object' &&
     window.TwinpxZonesDelivery.items &&
@@ -923,20 +923,20 @@ window.addEventListener('load', () => {
         window.TwinpxZonesDelivery.addressProperty
       );
 
-    //init active item
-    if (document.getElementById('twpx-zd-showmodal')) {
-      let activeItemId = document
-        .getElementById('twpx-zd-showmodal')
-        .getAttribute('data-id');
-
-      window.TwinpxZonesDelivery.activeItem =
-        window.TwinpxZonesDelivery.items.find(
-          (item) => String(item.id) === String(activeItemId)
-        );
-    }
-
     //show modal event
     window.TwinpxZonesDelivery.showModal = (id) => {
+      //init active item
+      if (document.getElementById('twpx-zd-showmodal')) {
+        let activeItemId = document
+          .getElementById('twpx-zd-showmodal')
+          .getAttribute('data-id');
+
+        window.TwinpxZonesDelivery.activeItem =
+          window.TwinpxZonesDelivery.items.find(
+            (item) => String(item.id) === String(activeItemId)
+          );
+      }
+      //show modal
       if (window.TwinpxZonesDelivery.activeItem) {
         window.TwinpxZonesDelivery.modal.showModal();
       }
