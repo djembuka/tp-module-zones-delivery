@@ -552,6 +552,19 @@ label#twpxZdGeojsonBtn input {
 .twpx-zd-modal.twpx-zd-modal--show .twpx-zd-modal-body {
   transform: translateX(-50%) translateY(-50%);
 }
+.twpx-zd-modal--message .twpx-zd-modal-title,
+.twpx-zd-modal--message .twpx-zd-modal-footer {
+  display: none;
+}
+.twpx-zd-modal--message #TwpxZdGeojsonYmap div {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+}
 
 .twpx-zd-modal-title {
   position: absolute;
