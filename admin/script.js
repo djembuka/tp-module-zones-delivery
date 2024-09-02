@@ -214,7 +214,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const reader = new FileReader();
         reader.addEventListener('load', () => {
-          twpxZdAdm.showModal(JSON.parse(reader.result).features);
+          let features = JSON.parse(reader.result).features;
+          features = features.filter(
+            (feature) => feature.geometry.type === 'Polygon'
+          );
+          twpxZdAdm.showModal(features);
           twpxZdAdm.geojsonFileInput.value = '';
         });
         reader.readAsText(file);
@@ -565,6 +569,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 result.status === 'success' &&
                 result.data
               ) {
+                //remove features not Polygons
+                result.data.features = result.data.features.filter(
+                  (feature) => feature.geometry.type === 'Polygon'
+                );
+
                 result.data.features.sort(
                   (a, b) =>
                     Number(b.properties.zIndex) - Number(a.properties.zIndex)
