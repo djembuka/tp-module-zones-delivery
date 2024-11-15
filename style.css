@@ -95,6 +95,10 @@ body {
   padding: 0;
 }
 
+body.twpx-zd-no-scroll {
+  overflow: hidden;
+}
+
 .twpx-zd-modal {
   position: fixed;
   top: 0;

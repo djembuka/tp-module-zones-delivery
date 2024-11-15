@@ -214,7 +214,17 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const reader = new FileReader();
         reader.addEventListener('load', () => {
-          twpxZdAdm.showModal(JSON.parse(reader.result).features);
+          let features = JSON.parse(reader.result).features;
+          features = features.filter(
+            (feature) => feature.geometry.type === 'Polygon'
+          );
+          if (features.length) {
+            twpxZdAdm.showModal({ polygons: features });
+          } else {
+            twpxZdAdm.showModal({
+              message: BX.message('TWINPX_JS_NO_POLYGONS'),
+            });
+          }
           twpxZdAdm.geojsonFileInput.value = '';
         });
         reader.readAsText(file);
@@ -235,10 +245,17 @@ window.addEventListener('DOMContentLoaded', () => {
       });
     },
 
-    showModal(polygons) {
+    showModal({ polygons, message }) {
       twpxZdAdm.geojsonModal.classList.add('twpx-zd-modal--show');
       twpxZdAdm.geojsonModal.classList.add('twpx-zd-modal--z');
-      twpxZdAdm.ymapGeojson(polygons);
+      if (polygons) {
+        twpxZdAdm.ymapGeojson(polygons);
+      } else if (message) {
+        twpxZdAdm.geojsonModal.classList.add('twpx-zd-modal--message');
+        document.getElementById(
+          'TwpxZdGeojsonYmap'
+        ).innerHTML = `<div>${message}</div>`;
+      }
     },
     hideModal() {
       twpxZdAdm.geojsonModal.classList.remove('twpx-zd-modal--show');
@@ -251,6 +268,7 @@ window.addEventListener('DOMContentLoaded', () => {
       delete twpxZdAdm.geojsonChosenProperties;
     },
     ymapGeojson(polygons) {
+      document.getElementById('TwpxZdGeojsonYmap').innerHTML = '';
       //create id
       polygons.forEach((p) => {
         p.properties.id = Math.round(Math.random() * 10000);
@@ -565,6 +583,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 result.status === 'success' &&
                 result.data
               ) {
+                //remove features not Polygons
+                result.data.features = result.data.features.filter(
+                  (feature) => feature.geometry.type === 'Polygon'
+                );
+
                 result.data.features.sort(
                   (a, b) =>
                     Number(b.properties.zIndex) - Number(a.properties.zIndex)
@@ -776,6 +799,9 @@ window.addEventListener('DOMContentLoaded', () => {
         });
 
       function validateControl(reqInput) {
+        if (!reqInput.getAttribute('required')) {
+          return;
+        }
         if (reqInput.value.trim() === '') {
           if (!focusElement) {
             focusElement = reqInput;
