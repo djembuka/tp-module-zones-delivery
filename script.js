@@ -206,9 +206,7 @@ class TwinpxZonesDeliveryYmapClass {
                     }
                   },
                   (error) => {
-                    window.TwinpxZonesDelivery.modal.showError(
-                      error.errors[0].message
-                    );
+                    rej(error.errors[0].message);
                   }
                 );
             }
@@ -420,9 +418,7 @@ class TwinpxZonesDeliveryYmapClass {
                 }
               },
               (error) => {
-                window.TwinpxZonesDelivery.modal.showError(
-                  error.errors[0].message
-                );
+                rej(error.errors[0].message);
               }
             );
         }
@@ -892,16 +888,19 @@ class TwinpxZonesDeliveryClass {
             },
             (error) => {
               //сюда будут приходить все ответы, у которых status !== 'success'
-              window.TwinpxZonesDelivery.modal.showError(
-                error.errors[0].message
-              );
+              rej(error.errors[0].message);
             }
           );
       });
 
-      await promise.then((res) => {
-        result = res;
-      });
+      await promise.then(
+        (res) => {
+          result = res;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     }
 
     return result;
