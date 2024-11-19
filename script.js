@@ -247,7 +247,12 @@ class TwinpxZonesDeliveryYmapClass {
             this.highlightResult(this.deliveryPoint);
           },
           (error) => {
-            window.TwinpxZonesDelivery.modal.showError(error);
+            window.TwinpxZonesDelivery.modal.showError(
+              BX.message('TWINPX_JS_ERROR')
+            );
+            if (window.console) {
+              console.log(error);
+            }
           }
         );
       })
@@ -480,8 +485,17 @@ class TwinpxZonesDeliveryYmapClass {
         }
       },
       (error) => {
-        window.TwinpxZonesDelivery.modal.showError(error);
+        window.TwinpxZonesDelivery.modal.showError(
+          BX.message('TWINPX_JS_ERROR')
+        );
+        if (window.console) {
+          console.log(error);
+        }
         this.highlightResult(this.deliveryPoint);
+
+        if (callback) {
+          callback();
+        }
       }
     );
   }
@@ -509,6 +523,8 @@ class TwinpxZonesDeliveryYmapClass {
   }
 
   async highlightResult(obj) {
+    if (!window.TwinpxZonesDelivery.activeItem.inst.deliveryZones) return;
+
     // Сохраняем координаты переданного объекта.
     let coords = obj.geometry
         ? obj.geometry.getCoordinates()
@@ -896,10 +912,10 @@ class TwinpxZonesDeliveryClass {
       await promise.then(
         (res) => {
           result = res;
-        },
-        (error) => {
-          console.log(error);
         }
+        // (error) => {
+        //   console.log(error);
+        // }
       );
     }
 

@@ -307,6 +307,23 @@ body.twpx-zd-no-scroll {
   pointer-events: none;
 }
 
+/*Error*/
+.twpx-zd-modal-content--error #TwpxZdYmap {
+  display: none;
+}
+.twpx-zd-modal-content--error .twpx-zd-modal-error {
+  background-color: var(--theme-b-bd-primary);
+  color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  margin: 50% 16px;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+.twpx-zd-modal-content--error + .twpx-zd-modal-footer {
+  display: none;
+}
+
 @keyframes circle {
   0% {
     transform: rotate(0);
