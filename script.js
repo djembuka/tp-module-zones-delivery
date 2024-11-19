@@ -206,7 +206,9 @@ class TwinpxZonesDeliveryYmapClass {
                     }
                   },
                   (error) => {
-                    rej(error);
+                    window.TwinpxZonesDelivery.modal.showError(
+                      error.errors[0].message
+                    );
                   }
                 );
             }
@@ -418,7 +420,9 @@ class TwinpxZonesDeliveryYmapClass {
                 }
               },
               (error) => {
-                rej(error);
+                window.TwinpxZonesDelivery.modal.showError(
+                  error.errors[0].message
+                );
               }
             );
         }
@@ -888,7 +892,9 @@ class TwinpxZonesDeliveryClass {
             },
             (error) => {
               //сюда будут приходить все ответы, у которых status !== 'success'
-              rej(error);
+              window.TwinpxZonesDelivery.modal.showError(
+                error.errors[0].message
+              );
             }
           );
       });
