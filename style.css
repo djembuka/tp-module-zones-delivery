@@ -308,17 +308,20 @@ body.twpx-zd-no-scroll {
 }
 
 /*Error*/
+.twpx-zd-modal-content--error {
+  display: flex;
+  align-items: center;
+}
 .twpx-zd-modal-content--error #TwpxZdYmap {
   display: none;
 }
 .twpx-zd-modal-content--error .twpx-zd-modal-error {
-  background-color: var(--theme-b-bd-primary);
+  background-color: #e22b2b;
   color: #fff;
   padding: 16px;
   border-radius: 8px;
   margin: 50% 16px;
-  -webkit-transform: translateY(-50%);
-  transform: translateY(-50%);
+  width: 100%;
 }
 .twpx-zd-modal-content--error + .twpx-zd-modal-footer {
   display: none;

@@ -112,7 +112,12 @@ class TwinpxZonesDeliveryModalClass {
       this.modal.classList.add('twpx-zd-modal--show');
       this.modal.classList.add('twpx-zd-modal--z');
       return;
-    } else if (window.TwinpxZonesDelivery.ymap.ymapsMap) {
+    } else if (!window.TwinpxZonesDelivery.ymap.ymapsMap) {
+      this.showError(BX.message('TWINPX_JS_NO_YMAP_KEY'));
+      this.modal.classList.add('twpx-zd-modal--show');
+      this.modal.classList.add('twpx-zd-modal--z');
+      return;
+    } else {
       window.TwinpxZonesDelivery.ymap.fromShowModal(() => {
         this.modal.classList.add('twpx-zd-modal--show');
         this.modal.classList.add('twpx-zd-modal--z');
