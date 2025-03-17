@@ -240,6 +240,8 @@ class TwinpxZonesDeliveryYmapClass {
               activeDelivery.sendZoneId(true);
             }
 
+            window.TwinpxZonesDelivery.activeItem.inst = activeDelivery;
+
             //set placemark on the map
             this.deliveryPoint.geometry.setCoordinates(coords);
             this.ymapsMap.setZoom(12);
@@ -509,6 +511,8 @@ class TwinpxZonesDeliveryYmapClass {
   }
 
   async highlightResult(obj) {
+    if (!window.TwinpxZonesDelivery.activeItem.inst.deliveryZones) return;
+
     // Сохраняем координаты переданного объекта.
     let coords = obj.geometry
         ? obj.geometry.getCoordinates()
