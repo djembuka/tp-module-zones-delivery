@@ -157,14 +157,14 @@ class TwinpxZonesDeliveryYmapClass {
   fromAddressBlur() {
     this.getCenterMapsFromCookies();
 
-    let addressGeocoder = ymaps.geocode(
-      window.TwinpxZonesDelivery.centerMaps +
-        ', ' +
-        window.TwinpxZonesDelivery.address.chosenAddress,
-      {
-        results: 1,
-      }
-    );
+    let addressGeocoderString =
+      String(window.TwinpxZonesDelivery.addressType) === '1'
+        ? `${window.TwinpxZonesDelivery.centerMaps}, ${window.TwinpxZonesDelivery.address.chosenAddress}`
+        : window.TwinpxZonesDelivery.address.chosenAddress;
+
+    let addressGeocoder = ymaps.geocode(addressGeocoderString, {
+      results: 1,
+    });
 
     addressGeocoder
       .then(async (res) => {
