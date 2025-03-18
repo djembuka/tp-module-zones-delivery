@@ -240,8 +240,6 @@ class TwinpxZonesDeliveryYmapClass {
               activeDelivery.sendZoneId(true);
             }
 
-            window.TwinpxZonesDelivery.activeItem.inst = activeDelivery;
-
             //set placemark on the map
             this.deliveryPoint.geometry.setCoordinates(coords);
             this.ymapsMap.setZoom(12);
@@ -567,6 +565,7 @@ class TwinpxZonesDeliveryYmapClass {
         //load the price
         const price =
           await window.TwinpxZonesDelivery.activeItem.inst.getPrice();
+
         this.deliveryPoint.properties.set({
           balloonContent: `
           <div style="font: bold 18px 'Open Sans', Arial, sans-serif; margin-bottom: 17px;">${polygon.properties.get(
