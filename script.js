@@ -24,7 +24,11 @@ class TwinpxZonesDeliveryAddressControlClass {
     return addressControl;
   }
 
-  initAddressControl() {
+  initAddressControl(addressPropertyFromRequest) {
+    if (addressPropertyFromRequest) {
+      this.addressProperty = [addressPropertyFromRequest];
+    }
+
     this.addressControl = this.findAddressControl();
 
     if (
@@ -732,7 +736,7 @@ class TwinpxZonesDeliveryClass {
     let result = await response.json();
 
     if (typeof result === 'object' && result.status === 'success') {
-      window.TwinpxZonesDelivery.address.initAddressControl();
+      window.TwinpxZonesDelivery.address.initAddressControl(result.data?.addressProperty);
       if (
         window.TwinpxZonesDelivery.address.addressControl &&
         !blurAddressControlFlag
