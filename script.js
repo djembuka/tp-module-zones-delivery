@@ -418,6 +418,12 @@ class TwinpxZonesDeliveryYmapClass {
                 window.TwinpxZonesDelivery.activeItem.inst.polygons =
                   response.data;
                 if (window.TwinpxZonesDelivery.activeItem.inst.polygons) {
+
+                  window.TwinpxZonesDelivery.activeItem.inst.polygons.features.sort(
+                    (a, b) =>
+                      Number(b.properties.zIndex) - Number(a.properties.zIndex)
+                  );
+
                   res(window.TwinpxZonesDelivery.activeItem.inst.polygons);
                 }
               },
@@ -427,6 +433,11 @@ class TwinpxZonesDeliveryYmapClass {
             );
         }
       } else {
+        window.TwinpxZonesDelivery.activeItem.inst.polygons.features.sort(
+          (a, b) =>
+            Number(b.properties.zIndex) - Number(a.properties.zIndex)
+        );
+
         this.addPolygones();
       }
     });
