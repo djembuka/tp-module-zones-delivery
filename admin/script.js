@@ -484,7 +484,7 @@ window.addEventListener('DOMContentLoaded', () => {
           // const zdGeocoder = ymaps.geocode(TwinpxZonesDelivery.regionName, {
           //   results: 1,
           // });
-          const key = window.twinpxYadeliveryApikey;
+          const key = window.twinpxZdApikey;
           const zdGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${TwinpxZonesDelivery.regionName}&results=1&format=json`);
 
           zdGeocoder
