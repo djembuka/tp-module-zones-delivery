@@ -517,13 +517,21 @@ window.addEventListener('load', () => {
 
   TwinpxZonesDelivery.highlightResult = async function (obj) {
     // Сохраняем координаты переданного объекта.
-    var coords = obj.geometry
-        ? obj.geometry.getCoordinates()
-        : obj.get('coords'), //в obj может быть событие click из TwinpxZonesDelivery.ymapsMap.events
-      // Находим полигон, в который входят переданные координаты.
-      polygon = TwinpxZonesDelivery.deliveryZones
-        .searchContaining(coords)
-        .get(0);
+    let coords;
+    if (obj.geometry) {
+      coords = obj.geometry.getCoordinates();
+    } else if (obj.get) {
+      //в obj может быть событие click из this.ymapsMap.events
+      coords = obj.get('coords');
+    } else if (obj.Point) {
+      //в obj может быть результат геокодера
+      coords = obj.Point.pos.split(' ').reverse();
+    }
+
+    // Находим полигон, в который входят переданные координаты.
+    polygon = TwinpxZonesDelivery.deliveryZones
+      .searchContaining(coords)
+      .get(0);
 
     TwinpxZonesDelivery.chosenCoords = coords;
 

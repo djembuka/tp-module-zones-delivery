@@ -553,13 +553,21 @@ class TwinpxZonesDeliveryYmapClass {
     if (!window.TwinpxZonesDelivery.activeItem.inst.deliveryZones) return;
 
     // Сохраняем координаты переданного объекта.
-    let coords = obj.geometry
-        ? obj.geometry.getCoordinates()
-        : obj.get('coords'), //в obj может быть событие click из this.ymapsMap.events
-      // Находим полигон, в который входят переданные координаты.
-      polygon = window.TwinpxZonesDelivery.activeItem.inst.deliveryZones
-        .searchContaining(coords)
-        .get(0);
+    let coords;
+    if (obj.geometry) {
+      coords = obj.geometry.getCoordinates();
+    } else if (obj.get) {
+      //в obj может быть событие click из this.ymapsMap.events
+      coords = obj.get('coords');
+    } else if (obj.Point) {
+      //в obj может быть результат геокодера
+      coords = obj.Point.pos.split(' ').reverse();
+    }
+
+    // Находим полигон, в который входят переданные координаты.
+    polygon = window.TwinpxZonesDelivery.activeItem.inst.deliveryZones
+      .searchContaining(coords)
+      .get(0);
 
     this.chosenCoords = coords;
 
