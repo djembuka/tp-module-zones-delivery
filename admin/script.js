@@ -847,6 +847,7 @@ window.addEventListener('DOMContentLoaded', () => {
       );
       let formData = new FormData();
       formData.set('json', jsonStringify);
+      formData.set("sessid", BX.bitrix_sessid());
 
       let response = await fetch(twpxZdAdm.addForm.getAttribute('action'), {
         method: twpxZdAdm.addForm.getAttribute('method'),
@@ -965,6 +966,7 @@ window.addEventListener('DOMContentLoaded', () => {
         );
         let formData = new FormData();
         formData.set('json', jsonStringify);
+        formData.set("sessid", BX.bitrix_sessid());
 
         let response = await fetch(
           twpxZdAdm.addForm.getAttribute('data-delete-action'),

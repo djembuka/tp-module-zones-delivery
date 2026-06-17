@@ -274,6 +274,7 @@ window.addEventListener('load', () => {
     const formData = new FormData();
     formData.append('zid', TwinpxZonesDelivery.chosenZoneId);
     formData.append('coords', TwinpxZonesDelivery.chosenCoords);
+    formData.append("sessid", BX.bitrix_sessid());
     let response = await fetch(
       `/bitrix/services/main/ajax.php?mode=class&c=twinpx:zones.delivery&action=setZone`,
       {

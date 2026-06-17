@@ -770,6 +770,7 @@ class TwinpxZonesDeliveryClass {
     formData.append('did', this.id);
     formData.append('zid', this.chosenZoneId);
     formData.append('coords', window.TwinpxZonesDelivery.ymap.chosenCoords);
+    formData.append("sessid", BX.bitrix_sessid());
     let response = await fetch(
       `/bitrix/services/main/ajax.php?mode=class&c=twinpx:zones.delivery&action=setZone`,
       {
