@@ -481,15 +481,25 @@ window.addEventListener('DOMContentLoaded', () => {
           }
 
           //geo code
-          const zdGeocoder = ymaps.geocode(TwinpxZonesDelivery.regionName, {
-            results: 1,
-          });
+          // const zdGeocoder = ymaps.geocode(TwinpxZonesDelivery.regionName, {
+          //   results: 1,
+          // });
+          const key = window.twinpxYadeliveryApikey;
+          const zdGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${TwinpxZonesDelivery.regionName}&results=1&format=json`);
 
-          zdGeocoder.then(async (res) => {
+          zdGeocoder
+            .then((res) => {
+              if (!res.ok) throw Error('Bad geocode response');
+              return res.json();
+            })
+            .then(async (res) => {
             // first result, its coords and bounds
-            let firstGeoObject = res.geoObjects.get(0);
-            firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
-            bounds = firstGeoObject.properties.get('boundedBy');
+            let firstGeoObject = res.response.GeoObjectCollection.featureMember[0].GeoObject;
+            firstGeoObjectCoords = firstGeoObject.Point.pos.split(' ').reverse();
+            bounds = [
+              firstGeoObject.boundedBy.Envelope.lowerCorner.split(' ').reverse(),
+              firstGeoObject.boundedBy.Envelope.upperCorner.split(' ').reverse()
+            ];
 
             let MyBalloonLayout = ymaps.templateLayoutFactory.createClass(
               `

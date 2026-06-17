@@ -166,13 +166,19 @@ class TwinpxZonesDeliveryYmapClass {
         ? `${window.TwinpxZonesDelivery.centerMaps}, ${window.TwinpxZonesDelivery.address.chosenAddress}`
         : window.TwinpxZonesDelivery.address.chosenAddress;
 
-    let addressGeocoder = ymaps.geocode(addressGeocoderString, {
-      results: 1,
-    });
+    // let addressGeocoder = ymaps.geocode(addressGeocoderString, {
+    //   results: 1,
+    // });
+    const key = window.twinpxYadeliveryApikey;
+    const addressGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${addressGeocoderString}&results=1&format=json`);
 
     addressGeocoder
+      .then((res) => {
+          if (!res.ok) throw Error('Bad geocode response');
+          return res.json();
+        })
       .then(async (res) => {
-        let geoObject = res.geoObjects.get(0);
+        let geoObject = res.response.GeoObjectCollection.featureMember[0].GeoObject;
         const activeDelivery = window.TwinpxZonesDelivery.activeItem.inst;
 
         if (!geoObject) {
@@ -184,7 +190,7 @@ class TwinpxZonesDeliveryYmapClass {
           return;
         }
 
-        let coords = geoObject.geometry.getCoordinates();
+        let coords = geoObject.Point.pos.split(' ').reverse();
         this.chosenCoords = coords;
 
         let promise = new Promise(async (res, rej) => {
@@ -274,15 +280,25 @@ class TwinpxZonesDeliveryYmapClass {
 
     function showCenter() {
       // geo code
-      const zdGeocoder = ymaps.geocode(window.TwinpxZonesDelivery.centerMaps, {
-        results: 1,
-      });
-      zdGeocoder.then(async (res) => {
-        let firstGeoObject = res.geoObjects.get(0);
-        inst.highlightResult(firstGeoObject);
-        inst.regionBounds = firstGeoObject.properties.get('boundedBy');
-        inst.ymapsMap.setBounds(inst.regionBounds);
-        callback();
+      // const zdGeocoder = ymaps.geocode(window.TwinpxZonesDelivery.centerMaps, {
+      //   results: 1,
+      // });
+      const key = window.twinpxYadeliveryApikey;
+      const zdGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${window.TwinpxZonesDelivery.centerMaps}&results=1&format=json`);
+      zdGeocoder
+        .then((res) => {
+          if (!res.ok) throw Error('Bad geocode response');
+          return res.json();
+        })
+        .then(async (res) => {
+          let firstGeoObject = res.response.GeoObjectCollection.featureMember[0].GeoObject;
+          inst.highlightResult(firstGeoObject);
+          inst.regionBounds = [
+            firstGeoObject.boundedBy.Envelope.lowerCorner.split(' ').reverse(),
+            firstGeoObject.boundedBy.Envelope.upperCorner.split(' ').reverse()
+          ];
+          inst.ymapsMap.setBounds(inst.regionBounds);
+          callback();
       });
     }
   }
@@ -299,17 +315,27 @@ class TwinpxZonesDeliveryYmapClass {
 
   initYmapsMap(callback) {
     //geo code
-    const zdGeocoder = ymaps.geocode(window.TwinpxZonesDelivery.centerMaps, {
-      results: 1,
-    });
+    // const zdGeocoder = ymaps.geocode(window.TwinpxZonesDelivery.centerMaps, {
+    //   results: 1,
+    // });
+    const key = window.twinpxYadeliveryApikey;
+    const myGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${window.TwinpxZonesDelivery.centerMaps}&results=1&format=json`);
 
-    zdGeocoder.then(async (res) => {
-      // first result, its coords and bounds
-      let firstGeoObject = res.geoObjects.get(0);
-      let firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
-      this.regionBounds = firstGeoObject.properties.get('boundedBy');
-      this.chosenCoords = firstGeoObjectCoords;
-      let t = this;
+    zdGeocoder
+      .then((res) => {
+        if (!res.ok) throw Error('Bad geocode response');
+        return res.json();
+      })
+      .then(async (res) => {
+        // first result, its coords and bounds
+        let firstGeoObject = res.response.GeoObjectCollection.featureMember[0].GeoObject;
+        let firstGeoObjectCoords = firstGeoObject.Point.pos.split(' ').reverse();
+        this.regionBounds = [
+          firstGeoObject.boundedBy.Envelope.lowerCorner.split(' ').reverse(),
+          firstGeoObject.boundedBy.Envelope.upperCorner.split(' ').reverse()
+        ];
+        this.chosenCoords = firstGeoObjectCoords;
+        let t = this;
 
       let MyBalloonLayout = ymaps.templateLayoutFactory.createClass(
         `
@@ -595,14 +621,22 @@ class TwinpxZonesDeliveryYmapClass {
       } else {
         // Если вы не хотите, чтобы при каждом перемещении метки отправлялся запрос к геокодеру,
         // закомментируйте код ниже.
-        ymaps.geocode(coords, { results: 1 }).then(async (res) => {
+        // ymaps.geocode(coords, { results: 1 }).then(async (res) => {
+        const key = window.twinpxYadeliveryApikey;
+        const myGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${coords}&results=1&format=json`);
+        myGeocoder
+          .then((res) => {
+            if (!res.ok) throw Error('Bad geocode response');
+            return res.json();
+          })
+        .then(async (res) => {
           //remember zone id
           window.TwinpxZonesDelivery.activeItem.inst.chosenZoneId =
             polygon.properties.get('id');
           window.TwinpxZonesDelivery.activeItem.inst.chosenZoneTitle =
             polygon.properties.get('title');
           //balloon
-          var obj = res.geoObjects.get(0);
+          var obj = res.response.GeoObjectCollection.featureMember[0].GeoObject;
 
           this.chosenAddress = getAddress(this, obj);
 
