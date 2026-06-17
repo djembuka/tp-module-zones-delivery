@@ -125,6 +125,7 @@ window.addEventListener('DOMContentLoaded', () => {
           'activity',
           !e.target.classList.contains('twpx-zd-adm__switcher--switched')
         );
+        formData.append("sessid", BX.bitrix_sessid());
 
         setTimeout(() => {
           if (!response) {
@@ -133,11 +134,11 @@ window.addEventListener('DOMContentLoaded', () => {
         }, twpxZdAdm.fetchTimeout);
         try {
           response = await fetch(
-            TwinpxZonesDelivery.activityUrl /*, {
-            body: formData,
-            method: 'POST',
-            signal: controller.signal,
-          }*/
+            TwinpxZonesDelivery.activityUrl, {
+              body: formData,
+              method: 'POST',
+              signal: controller.signal,
+            }
           );
 
           result = await response.json();
@@ -1007,12 +1008,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
       const editData = new FormData();
       editData.append('id', id);
+      editData.append("sessid", BX.bitrix_sessid());
       let response = await fetch(
-        twpxZdAdm.addForm.getAttribute('data-fill-action') /*,
+        twpxZdAdm.addForm.getAttribute('data-fill-action'),
         {
           method: 'POST',
           body: editData,
-        }*/
+        }
       );
       let result = await response.json();
 

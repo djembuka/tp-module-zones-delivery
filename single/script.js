@@ -529,7 +529,7 @@ window.addEventListener('load', () => {
     }
 
     // Находим полигон, в который входят переданные координаты.
-    polygon = TwinpxZonesDelivery.deliveryZones
+    let polygon = TwinpxZonesDelivery.deliveryZones
       .searchContaining(coords)
       .get(0);
 
@@ -594,7 +594,7 @@ window.addEventListener('load', () => {
         // закомментируйте код ниже.
         // ymaps.geocode(coords, { results: 1 }).then(async function (res) {
         const key = window.TwinpxZonesDelivery.ymapsKey;
-        const myGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${coords}&results=1&format=json`);
+        const myGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${coords}&results=1&format=json&sco=latlong`);
         myGeocoder
         .then((res) => {
           if (!res.ok) throw Error('Bad geocode response');
@@ -678,11 +678,21 @@ window.addEventListener('load', () => {
         obj.getPremiseNumber(),
         obj.getPremise(),
       ].join(' ');*/
-      let address = obj.properties._data.name;
-      TwinpxZonesDelivery.chosenAddressWithCity = obj.getAddressLine();
-      if (address.trim() === '') {
-        address = obj.getAddressLine();
-      }
+
+      // let address = obj.properties._data.name;
+      // TwinpxZonesDelivery.chosenAddressWithCity = obj.getAddressLine();
+      // if (address.trim() === '') {
+      //   address = obj.getAddressLine();
+      // }
+
+      let address = obj.metaDataProperty.GeocoderMetaData.Address.formatted;
+
+      window.TwinpxZonesDelivery.activeItem.inst.chosenAddressWithCity =
+        obj.metaDataProperty.GeocoderMetaData.AddressDetails.Country.AddressLine;
+
+      if (address.trim() === '')
+        address = obj.metaDataProperty.GeocoderMetaData.AddressDetails.Country.AddressLine;
+
       return address;
     }
   };
