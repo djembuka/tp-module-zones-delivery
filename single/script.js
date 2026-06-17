@@ -62,7 +62,7 @@ window.addEventListener('load', () => {
       // const zdGeocoder = ymaps.geocode(TwinpxZonesDelivery.centerMaps, {
       //   results: 1,
       // });
-      const key = window.twinpxYadeliveryApikey;
+      const key = window.TwinpxZonesDelivery.ymapsKey;
       const zdGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${TwinpxZonesDelivery.centerMaps}&results=1&format=json`);
 
       zdGeocoder
@@ -205,7 +205,7 @@ window.addEventListener('load', () => {
       // let addressGeocoder = ymaps.geocode(TwinpxZonesDelivery.centerMaps + ', ' + TwinpxZonesDelivery.chosenAddress,
       //   {results: 1}
       // );
-      const key = window.twinpxYadeliveryApikey;
+      const key = window.TwinpxZonesDelivery.ymapsKey;
       const addressGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${TwinpxZonesDelivery.centerMaps + ', ' + TwinpxZonesDelivery.chosenAddress}&results=1&format=json`);
 
       addressGeocoder
@@ -313,7 +313,7 @@ window.addEventListener('load', () => {
         // const zdGeocoder = ymaps.geocode(TwinpxZonesDelivery.centerMaps, {
         //   results: 1,
         // });
-        const key = window.twinpxYadeliveryApikey;
+        const key = window.TwinpxZonesDelivery.ymapsKey;
         const zdGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${TwinpxZonesDelivery.centerMaps}&results=1&format=json`);
 
         zdGeocoder
@@ -585,7 +585,7 @@ window.addEventListener('load', () => {
         // Если вы не хотите, чтобы при каждом перемещении метки отправлялся запрос к геокодеру,
         // закомментируйте код ниже.
         // ymaps.geocode(coords, { results: 1 }).then(async function (res) {
-        const key = window.twinpxYadeliveryApikey;
+        const key = window.TwinpxZonesDelivery.ymapsKey;
         const myGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${coords}&results=1&format=json`);
         myGeocoder
         .then((res) => {

@@ -169,7 +169,7 @@ class TwinpxZonesDeliveryYmapClass {
     // let addressGeocoder = ymaps.geocode(addressGeocoderString, {
     //   results: 1,
     // });
-    const key = window.twinpxYadeliveryApikey;
+    const key = window.TwinpxZonesDelivery.ymapsKey;
     const addressGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${addressGeocoderString}&results=1&format=json`);
 
     addressGeocoder
@@ -283,7 +283,7 @@ class TwinpxZonesDeliveryYmapClass {
       // const zdGeocoder = ymaps.geocode(window.TwinpxZonesDelivery.centerMaps, {
       //   results: 1,
       // });
-      const key = window.twinpxYadeliveryApikey;
+      const key = window.TwinpxZonesDelivery.ymapsKey;
       const zdGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${window.TwinpxZonesDelivery.centerMaps}&results=1&format=json`);
       zdGeocoder
         .then((res) => {
@@ -318,8 +318,8 @@ class TwinpxZonesDeliveryYmapClass {
     // const zdGeocoder = ymaps.geocode(window.TwinpxZonesDelivery.centerMaps, {
     //   results: 1,
     // });
-    const key = window.twinpxYadeliveryApikey;
-    const myGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${window.TwinpxZonesDelivery.centerMaps}&results=1&format=json`);
+    const key = window.TwinpxZonesDelivery.ymapsKey;
+    const zdGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${window.TwinpxZonesDelivery.centerMaps}&results=1&format=json`);
 
     zdGeocoder
       .then((res) => {
@@ -622,7 +622,7 @@ class TwinpxZonesDeliveryYmapClass {
         // Если вы не хотите, чтобы при каждом перемещении метки отправлялся запрос к геокодеру,
         // закомментируйте код ниже.
         // ymaps.geocode(coords, { results: 1 }).then(async (res) => {
-        const key = window.twinpxYadeliveryApikey;
+        const key = window.TwinpxZonesDelivery.ymapsKey;
         const myGeocoder = fetch(`https://geocode-maps.yandex.ru/v1/?apikey=${key}&geocode=${coords}&results=1&format=json`);
         myGeocoder
           .then((res) => {
